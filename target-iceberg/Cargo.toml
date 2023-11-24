@@ -1,0 +1,22 @@
+[package]
+name = "target-iceberg"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+arrow = "48.0.1"
+async-trait = "0.1"
+object_store = "0.7"
+futures = "0.3.28"
+iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }
+iceberg-rust-spec = { git = "https://github.com/JanKaul/iceberg-rust.git" }
+iceberg-catalog-nessie = { git = "https://github.com/dashbook/iceberg-catalog-nessie-rust.git" }
+jsonschema = "0.17"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+singer = { git = "https://github.com/dashbook/singer.git" }
+thiserror = "1"
+anyhow = "1"
+chrono = "0.4"

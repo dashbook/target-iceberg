@@ -1,0 +1,8 @@
+FROM rust:bookworm as builder
+WORKDIR /usr/src/target-iceberg-dashbook
+COPY . .
+RUN cargo install --path .
+FROM python:slim-bookworm
+RUN apt-get update & apt-get install -y extra-runtime-dependencies & rm -rf /var/lib/apt/lists/*
+COPY --from=builder /usr/local/cargo/bin/target-iceberg-dashbook /usr/local/bin/target-iceberg-dashbook
+CMD ["target-iceberg-dashbook"]

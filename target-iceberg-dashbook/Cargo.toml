@@ -1,0 +1,18 @@
+[package]
+name = "target-iceberg-dashbook"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0"
+async-trait = "0.1"
+clap = { version = "4", features = ["derive"] }
+dashbook-catalog = { git = "https://github.com/dashbook/dashbook-catalog.git" }
+futures = "0.3.28"
+iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+target-iceberg = { git = "https://github.com/dashbook/target-iceberg.git" }

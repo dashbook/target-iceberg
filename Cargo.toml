@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "target-iceberg",
+    "target-iceberg-dashbook",
+]
