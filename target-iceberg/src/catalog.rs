@@ -20,17 +20,6 @@ pub async fn select_streams(
 
     let catalog: SingerCatalog = serde_json::from_str(&json)?;
 
-    // let catalogs: Arc<Mutex<HashMap<String, Arc<dyn Catalog>>>> =
-    //     Arc::new(Mutex::new(HashMap::new()));
-
-    // let catalog_name = config
-    //     .catalog
-    //     .split("/")
-    //     .last()
-    //     .ok_or(SingerIcebergError::Anyhow(anyhow!(
-    //         "Catalog url doesn't contain catalog name."
-    //     )))?;
-
     let streams = stream::iter(catalog.streams.into_iter())
         .filter_map(|stream| {
             let streams = streams.clone();
@@ -83,35 +72,6 @@ pub async fn select_streams(
                 let ident = Identifier::parse(&identifier)?;
 
                 let catalog = plugin.catalog(&table_namespace, &table_name).await?;
-
-                // let role = get_role(
-                //     &config.access_token,
-                //     catalog_name,
-                //     &table_namespace,
-                //     &table_name,
-                //     "read",
-                // )
-                // .await?;
-
-                // let catalog = {
-                //     let mut catalogs = catalogs.lock().await;
-                //     match catalogs.get(&role) {
-                //         Some(catalog) => catalog.clone(),
-                //         None => {
-                //             let catalog = get_catalog(
-                //                 &config.catalog,
-                //                 &config.access_token,
-                //                 &config.id_token,
-                //                 &table_namespace,
-                //                 &table_name,
-                //                 &role,
-                //             )
-                //             .await?;
-                //             catalogs.insert(role, catalog.clone());
-                //             catalog
-                //         }
-                //     }
-                // };
 
                 if !catalog.table_exists(&ident).await? {
                     let arrow_schema = schema_to_arrow(&stream.schema)?;

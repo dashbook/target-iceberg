@@ -30,35 +30,6 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
                 };
                 let catalog = plugin.catalog(&table_namespace, &table_name).await?;
 
-                // let role = get_role(
-                //     &config.access_token,
-                //     catalog_name,
-                //     &table_namespace,
-                //     &table_name,
-                //     "read",
-                // )
-                // .await?;
-
-                // let catalog = {
-                //     let mut catalogs = catalogs.lock().await;
-                //     match catalogs.get(&role) {
-                //         Some(catalog) => catalog.clone(),
-                //         None => {
-                //             let catalog = get_catalog(
-                //                 &config.catalog,
-                //                 &config.access_token,
-                //                 &config.id_token,
-                //                 &table_namespace,
-                //                 &table_name,
-                //                 &role,
-                //             )
-                //             .await?;
-                //             catalogs.insert(role, catalog.clone());
-                //             catalog
-                //         }
-                //     }
-                // };
-
                 let table = catalog.load_table(&Identifier::parse(identifier)?).await?;
 
                 let table = if let Tabular::Table(table) = table {

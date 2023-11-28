@@ -44,17 +44,6 @@ pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergEr
 
     let (mut state_sender, state_reciever) = unbounded();
 
-    // let catalogs: Arc<Mutex<HashMap<String, Arc<dyn Catalog>>>> =
-    //     Arc::new(Mutex::new(HashMap::new()));
-
-    // let catalog_name = config
-    //     .catalog
-    //     .split("/")
-    //     .last()
-    //     .ok_or(SingerIcebergError::Anyhow(anyhow!(
-    //         "Catalog url doesn't contain catalog name."
-    //     )))?;
-
     let state = Arc::new(Mutex::new(
         state_reciever
             .fold(JsonValue::Null, |acc, x| async move {
@@ -105,35 +94,6 @@ pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergEr
                 };
 
                 let catalog = plugin.catalog(&table_namespace, &table_name).await?;
-
-                // let role = get_role(
-                //     &config.access_token,
-                //     catalog_name,
-                //     &table_namespace,
-                //     &table_name,
-                //     "read",
-                // )
-                // .await?;
-
-                // let catalog = {
-                //     let mut catalogs = catalogs.lock().await;
-                //     match catalogs.get(&role) {
-                //         Some(catalog) => catalog.clone(),
-                //         None => {
-                //             let catalog = get_catalog(
-                //                 &config.catalog,
-                //                 &config.access_token,
-                //                 &config.id_token,
-                //                 &table_namespace,
-                //                 &table_name,
-                //                 &role,
-                //             )
-                //             .await?;
-                //             catalogs.insert(role, catalog.clone());
-                //             catalog
-                //         }
-                //     }
-                // };
 
                 let table = catalog
                     .clone()
