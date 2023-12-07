@@ -13,7 +13,7 @@ use futures::{
 };
 use iceberg_rust::{
     arrow::write::write_parquet_partitioned,
-    catalog::{identifier::Identifier, tabular::Tabular},
+    catalog::{bucket::parse_bucket, identifier::Identifier, tabular::Tabular},
     util::strip_prefix,
 };
 use singer::messages::Message;
@@ -174,12 +174,14 @@ pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergEr
 
                 let location: String = strip_prefix(&table.metadata().location);
 
+                let bucket = parse_bucket(&table.metadata().location)?;
+
                 let files = write_parquet_partitioned(
                     &location,
                     table_schema,
                     partition_spec,
                     batches,
-                    catalog.object_store().clone(),
+                    catalog.object_store(bucket).clone(),
                 )
                 .await?;
 
