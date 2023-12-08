@@ -15,8 +15,6 @@ pub struct Config {
     pub url: String,
     pub region: String,
     pub bucket: String,
-    pub access_token: String,
-    pub id_token: String,
     pub branch: Option<String>,
 }
 
@@ -50,20 +48,16 @@ impl SqlTargetPlugin {
 
 #[async_trait]
 impl TargetPlugin for SqlTargetPlugin {
-    async fn catalog(
-        &self,
-        _table_namespace: &str,
-        _table_name: &str,
-    ) -> Result<Arc<dyn Catalog>, SingerIcebergError> {
+    async fn catalog(&self) -> Result<Arc<dyn Catalog>, SingerIcebergError> {
         Ok(self.catalog.clone())
     }
     fn bucket(&self) -> &str {
         &self.config.bucket
     }
-    fn streams(&self) -> Arc<HashMap<String, String>> {
-        unimplemented!()
+    fn streams(&self) -> &HashMap<String, String> {
+        &self.config.streams
     }
     fn branch(&self) -> &Option<String> {
-        unimplemented!()
+        &self.config.branch
     }
 }

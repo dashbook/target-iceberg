@@ -26,7 +26,7 @@ struct Args {
 async fn main() -> Result<(), SingerIcebergError> {
     let args = Args::parse();
 
-    let plugin = Arc::new(DashbookTargetPlugin::new(&args.config)?);
+    let plugin = Arc::new(DashbookTargetPlugin::new(&args.config).await?);
 
     if args.state {
         let state = generate_state(plugin.clone()).await?;
