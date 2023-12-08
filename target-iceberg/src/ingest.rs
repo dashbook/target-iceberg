@@ -84,16 +84,7 @@ pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergEr
 
                 let arrow_schema = Arc::new(schema_to_arrow(&schema.schema)?);
 
-                let (table_namespace, table_name) = {
-                    let mut parts: Vec<String> =
-                        identifier.split(".").map(|x| x.to_owned()).collect();
-                    let table_name = parts.pop().ok_or(SingerIcebergError::Anyhow(anyhow!(
-                        "Table identifier doesn't contain table name."
-                    )))?;
-                    (parts.join("."), table_name)
-                };
-
-                let catalog = plugin.catalog(&table_namespace, &table_name).await?;
+                let catalog = plugin.catalog().await?;
 
                 let table = catalog
                     .clone()

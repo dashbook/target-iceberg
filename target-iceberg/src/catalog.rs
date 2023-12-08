@@ -1,6 +1,5 @@
 use std::{fs, sync::Arc};
 
-use anyhow::anyhow;
 use futures::{stream, StreamExt, TryStreamExt};
 use iceberg_rust::{
     catalog::identifier::Identifier, spec::schema::Schema, table::table_builder::TableBuilder,
@@ -60,18 +59,9 @@ pub async fn select_streams(
                     }])
                 };
 
-                let (table_namespace, table_name) = {
-                    let mut parts: Vec<String> =
-                        identifier.split(".").map(|x| x.to_owned()).collect();
-                    let table_name = parts.pop().ok_or(SingerIcebergError::Anyhow(anyhow!(
-                        "Table identifier doesn't contain table name."
-                    )))?;
-                    (parts.join("."), table_name)
-                };
-
                 let ident = Identifier::parse(&identifier)?;
 
-                let catalog = plugin.catalog(&table_namespace, &table_name).await?;
+                let catalog = plugin.catalog().await?;
 
                 if !catalog.table_exists(&ident).await? {
                     let arrow_schema = schema_to_arrow(&stream.schema)?;

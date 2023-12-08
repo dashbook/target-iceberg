@@ -1,6 +1,5 @@
 use std::{collections::HashMap, sync::Arc};
 
-use anyhow::anyhow;
 use futures::{lock::Mutex, stream, StreamExt, TryStreamExt};
 use iceberg_rust::catalog::{identifier::Identifier, tabular::Tabular};
 use serde_json::{Map, Value};
@@ -20,15 +19,7 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
             let bookmarks = bookmarks.clone();
             let plugin = plugin.clone();
             async move {
-                let (table_namespace, table_name) = {
-                    let mut parts: Vec<String> =
-                        identifier.split(".").map(|x| x.to_owned()).collect();
-                    let table_name = parts.pop().ok_or(SingerIcebergError::Anyhow(anyhow!(
-                        "Table identifier doesn't contain table name."
-                    )))?;
-                    (parts.join("."), table_name)
-                };
-                let catalog = plugin.catalog(&table_namespace, &table_name).await?;
+                let catalog = plugin.catalog().await?;
 
                 let table = catalog.load_table(&Identifier::parse(identifier)?).await?;
 

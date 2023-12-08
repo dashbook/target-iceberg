@@ -1904,7 +1904,7 @@ dependencies = [
 [[package]]
 name = "iceberg-catalog-sql"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#489fae1a9b98a5a04af238ab8d8b5f361e72e28a"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#46db06e55e3113ecfbe610daed1edad3de2b5fd3"
 dependencies = [
  "async-trait",
  "futures",
@@ -1919,7 +1919,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust"
 version = "0.1.3"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#489fae1a9b98a5a04af238ab8d8b5f361e72e28a"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#46db06e55e3113ecfbe610daed1edad3de2b5fd3"
 dependencies = [
  "apache-avro",
  "arrow",
@@ -1945,7 +1945,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust-spec"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#489fae1a9b98a5a04af238ab8d8b5f361e72e28a"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#46db06e55e3113ecfbe610daed1edad3de2b5fd3"
 dependencies = [
  "apache-avro",
  "arrow-schema",
@@ -3082,9 +3082,9 @@ dependencies = [
 
 [[package]]
 name = "rustix"
-version = "0.38.26"
+version = "0.38.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9470c4bf8246c8daf25f9598dca807fb6510347b1e1cfa55749113850c79d88a"
+checksum = "bfeae074e687625746172d639330f1de242a178bf3189b51e35a7a21573513ac"
 dependencies = [
  "bitflags 2.4.1",
  "errno",
@@ -3813,7 +3813,7 @@ dependencies = [
 [[package]]
 name = "target-iceberg"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/target-iceberg.git#c6964b2ddcb777dcd0a1cae02ac6e9ef5afb88d0"
+source = "git+https://github.com/dashbook/target-iceberg.git#1d25925ce5e6ca8d442a8991d42fa45135f2d1ec"
 dependencies = [
  "anyhow",
  "arrow",
@@ -4114,9 +4114,9 @@ dependencies = [
 
 [[package]]
 name = "try-lock"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3528ecfd12c466c6f163363caf2d02a71161dd5e1cc6ae7b34207ea2d42d81ed"
+checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
 name = "twox-hash"
@@ -4560,9 +4560,9 @@ checksum = "dff9641d1cd4be8d1a070daf9e3773c5f67e78b4d9d42263020c057706765c04"
 
 [[package]]
 name = "winnow"
-version = "0.5.25"
+version = "0.5.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7e87b8dfbe3baffbe687eef2e164e32286eff31a5ee16463ce03d991643ec94"
+checksum = "b67b5f0a4e7a27a64c651977932b9dc5667ca7fc31ac44b03ed37a0cf42fdfff"
 dependencies = [
  "memchr",
 ]
