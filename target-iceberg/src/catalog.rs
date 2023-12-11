@@ -72,7 +72,12 @@ pub async fn select_streams(
                         fields: (&arrow_schema).try_into()?,
                     };
 
-                    let base_path = plugin.bucket().trim_end_matches("/").to_string()
+                    let base_path = plugin
+                        .bucket()
+                        .unwrap_or("")
+                        .trim_end_matches("/")
+                        .to_string()
+                        + "/"
                         + &identifier.replace(".", "/");
 
                     let mut builder = TableBuilder::new(ident, catalog)?;
