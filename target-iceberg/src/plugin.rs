@@ -21,3 +21,23 @@ pub struct BaseConfig {
     pub bucket: Option<String>,
     pub branch: Option<String>,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ObjectStoreConfig {
+    Memory,
+    FileSystem(FileSystemConfig),
+    S3(S3Config),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct S3Config {
+    pub region: String,
+    pub access_key_id: String,
+    pub secret_access_key: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct FileSystemConfig {
+    pub path: String,
+}
