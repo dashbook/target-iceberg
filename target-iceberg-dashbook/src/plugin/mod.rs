@@ -5,22 +5,23 @@ use async_trait::async_trait;
 use dashbook_catalog::DashbookS3CatalogList;
 use iceberg_rust::catalog::{Catalog, CatalogList};
 use serde::{Deserialize, Serialize};
-use target_iceberg::{error::SingerIcebergError, plugin::TargetPlugin};
+use target_iceberg::{
+    error::SingerIcebergError,
+    plugin::{BaseConfig, TargetPlugin},
+};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pub image: String,
-    pub streams: HashMap<String, String>,
+    #[serde(flatten)]
+    pub base: BaseConfig,
     pub catalog: String,
-    pub bucket: String,
     pub access_token: String,
     pub id_token: String,
-    pub branch: Option<String>,
 }
 
 #[derive(Debug)]
 pub(crate) struct DashbookTargetPlugin {
-    config: Config,
+    config: BaseConfig,
     catalog: Arc<dyn Catalog>,
 }
 
@@ -43,7 +44,10 @@ impl DashbookTargetPlugin {
                     &config.catalog
                 )))?;
 
-        Ok(Self { config, catalog })
+        Ok(Self {
+            config: config.base,
+            catalog,
+        })
     }
 }
 
@@ -52,8 +56,8 @@ impl TargetPlugin for DashbookTargetPlugin {
     async fn catalog(&self) -> Result<Arc<dyn Catalog>, SingerIcebergError> {
         Ok(self.catalog.clone())
     }
-    fn bucket(&self) -> &str {
-        &self.config.bucket
+    fn bucket(&self) -> Option<&str> {
+        self.config.bucket.as_deref()
     }
     fn streams(&self) -> &HashMap<String, String> {
         &self.config.streams
