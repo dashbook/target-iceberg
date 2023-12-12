@@ -23,17 +23,6 @@ pub struct BaseConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(
-    from = "Option<ObjectStoreConfigSerde>",
-    into = "Option<ObjectStoreConfigSerde>"
-)]
-pub enum ObjectStoreConfig {
-    FileSystem(FileSystemConfig),
-    S3(S3Config),
-    Memory,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct S3Config {
     pub region: String,
     pub access_key_id: String,
@@ -43,6 +32,24 @@ pub struct S3Config {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct FileSystemConfig {
     pub path: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(
+    from = "Option<ObjectStoreConfigSerde>",
+    into = "Option<ObjectStoreConfigSerde>"
+)]
+pub enum ObjectStoreConfig {
+    Memory,
+    FileSystem(FileSystemConfig),
+    S3(S3Config),
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ObjectStoreConfigSerde {
+    FileSystem(FileSystemConfig),
+    S3(S3Config),
 }
 
 impl From<Option<ObjectStoreConfigSerde>> for ObjectStoreConfig {
@@ -65,13 +72,6 @@ impl From<ObjectStoreConfig> for Option<ObjectStoreConfigSerde> {
             ObjectStoreConfig::FileSystem(value) => Some(ObjectStoreConfigSerde::FileSystem(value)),
         }
     }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ObjectStoreConfigSerde {
-    FileSystem(FileSystemConfig),
-    S3(S3Config),
 }
 
 #[cfg(test)]
