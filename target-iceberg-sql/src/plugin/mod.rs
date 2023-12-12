@@ -33,20 +33,20 @@ impl SqlTargetPlugin {
         let config: Config = serde_json::from_str(&config_json)?;
 
         let object_store: Arc<dyn ObjectStore> =
-            match config.object_store {
+            match &config.object_store {
                 ObjectStoreConfig::Memory => Arc::new(InMemory::new()),
                 ObjectStoreConfig::FileSystem(path) => {
-                    Arc::new(LocalFileSystem::new_with_prefix(path.path)?)
+                    Arc::new(LocalFileSystem::new_with_prefix(&path.path)?)
                 }
                 ObjectStoreConfig::S3(s3_config) => {
                     Arc::new(
                         AmazonS3Builder::new()
-                            .with_region(s3_config.region)
-                            .with_bucket_name(config.base.bucket.clone().ok_or(
+                            .with_region(&s3_config.region)
+                            .with_bucket_name(config.base.bucket.as_deref().ok_or(
                                 SingerIcebergError::Anyhow(anyhow!("No bucket specified.")),
                             )?)
-                            .with_access_key_id(s3_config.access_key_id)
-                            .with_secret_access_key(s3_config.secret_access_key)
+                            .with_access_key_id(&s3_config.access_key_id)
+                            .with_secret_access_key(&s3_config.secret_access_key)
                             .build()?,
                     )
                 }
