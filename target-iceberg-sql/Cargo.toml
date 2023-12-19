@@ -10,6 +10,7 @@ anyhow = "1.0"
 async-trait = "0.1"
 clap = { version = "4", features = ["derive"] }
 dashbook-catalog = { git = "https://github.com/dashbook/dashbook-catalog.git" }
+dashtool-common = { git = "https://github.com/dashbook/dashtool" }
 futures = "0.3.28"
 iceberg-catalog-sql = { git = "https://github.com/JanKaul/iceberg-rust.git" }
 iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }

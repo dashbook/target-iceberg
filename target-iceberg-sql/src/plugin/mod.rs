@@ -2,13 +2,14 @@ use std::{collections::HashMap, fs, sync::Arc};
 
 use anyhow::anyhow;
 use async_trait::async_trait;
+use dashtool_common::ObjectStoreConfig;
 use iceberg_catalog_sql::SqlCatalog;
 use iceberg_rust::{catalog::Catalog, error::Error as IcebergError};
-use object_store::{aws::AmazonS3Builder, local::LocalFileSystem, memory::InMemory, ObjectStore};
+use object_store::{aws::AmazonS3Builder, memory::InMemory, ObjectStore};
 use serde::{Deserialize, Serialize};
 use target_iceberg::{
     error::SingerIcebergError,
-    plugin::{BaseConfig, ObjectStoreConfig, TargetPlugin},
+    plugin::{BaseConfig, TargetPlugin},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -32,25 +33,25 @@ impl SqlTargetPlugin {
         let config_json = fs::read_to_string(path)?;
         let config: Config = serde_json::from_str(&config_json)?;
 
-        let object_store: Arc<dyn ObjectStore> =
-            match &config.object_store {
-                ObjectStoreConfig::Memory => Arc::new(InMemory::new()),
-                ObjectStoreConfig::FileSystem(path) => {
-                    Arc::new(LocalFileSystem::new_with_prefix(&path.path)?)
-                }
-                ObjectStoreConfig::S3(s3_config) => {
-                    Arc::new(
-                        AmazonS3Builder::new()
-                            .with_region(&s3_config.region)
-                            .with_bucket_name(config.base.bucket.as_deref().ok_or(
-                                SingerIcebergError::Anyhow(anyhow!("No bucket specified.")),
-                            )?)
-                            .with_access_key_id(&s3_config.access_key_id)
-                            .with_secret_access_key(&s3_config.secret_access_key)
-                            .build()?,
+        let object_store: Arc<dyn ObjectStore> = match &config.object_store {
+            ObjectStoreConfig::Memory => Arc::new(InMemory::new()),
+            ObjectStoreConfig::S3(s3_config) => Arc::new(
+                AmazonS3Builder::new()
+                    .with_region(&s3_config.aws_region)
+                    .with_bucket_name(
+                        config
+                            .base
+                            .bucket
+                            .as_deref()
+                            .ok_or(SingerIcebergError::Anyhow(anyhow!("No bucket specified.")))?,
                     )
-                }
-            };
+                    .with_access_key_id(&s3_config.aws_access_key_id)
+                    .with_secret_access_key(s3_config.aws_secret_access_key.as_ref().ok_or(
+                        SingerIcebergError::Anyhow(anyhow!("No aws secret access key given.")),
+                    )?)
+                    .build()?,
+            ),
+        };
 
         let catalog = Arc::new(
             SqlCatalog::new(&config.url, &config.name, object_store)

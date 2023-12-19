@@ -1300,7 +1300,7 @@ dependencies = [
 [[package]]
 name = "dashtool-common"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/dashtool#cfe13801ecd694a0abfb6d02635d5a8572e277f5"
+source = "git+https://github.com/dashbook/dashtool#592969892e3a97d94ffc176a3b8c9c9fe8634ec2"
 dependencies = [
  "serde",
 ]
@@ -3813,12 +3813,13 @@ dependencies = [
 [[package]]
 name = "target-iceberg"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/target-iceberg.git#7c346240974a54c4a34d60214c68753998fe4d08"
+source = "git+https://github.com/dashbook/target-iceberg.git#9111f1d46df98d13bc67fb45412c6cda832e6457"
 dependencies = [
  "anyhow",
  "arrow",
  "async-trait",
  "chrono",
+ "dashtool-common",
  "futures",
  "iceberg-catalog-nessie",
  "iceberg-rust",
@@ -3855,6 +3856,7 @@ dependencies = [
  "async-trait",
  "clap",
  "dashbook-catalog",
+ "dashtool-common",
  "futures",
  "iceberg-catalog-sql",
  "iceberg-rust",
