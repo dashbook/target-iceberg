@@ -13,13 +13,14 @@ use target_iceberg::{
 };
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Config {
     #[serde(flatten)]
     pub base: BaseConfig,
     #[serde(flatten)]
     pub object_store: ObjectStoreConfig,
-    pub name: String,
-    pub url: String,
+    pub catalog_name: String,
+    pub catalog_url: String,
 }
 
 #[derive(Debug)]
@@ -54,7 +55,7 @@ impl SqlTargetPlugin {
         };
 
         let catalog = Arc::new(
-            SqlCatalog::new(&config.url, &config.name, object_store)
+            SqlCatalog::new(&config.catalog_url, &config.catalog_name, object_store)
                 .await
                 .map_err(IcebergError::from)?,
         );
