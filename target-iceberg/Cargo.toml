@@ -9,6 +9,7 @@ edition = "2021"
 arrow = "48.0.1"
 async-trait = "0.1"
 object_store = "0.7"
+dashtool-common = { git = "https://github.com/dashbook/dashtool" }
 futures = "0.3.28"
 iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }
 iceberg-rust-spec = { git = "https://github.com/JanKaul/iceberg-rust.git" }

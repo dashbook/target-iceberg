@@ -22,64 +22,13 @@ pub struct BaseConfig {
     pub branch: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct S3Config {
-    pub region: String,
-    pub access_key_id: String,
-    pub secret_access_key: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct FileSystemConfig {
-    pub path: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(
-    from = "Option<ObjectStoreConfigSerde>",
-    into = "Option<ObjectStoreConfigSerde>"
-)]
-pub enum ObjectStoreConfig {
-    Memory,
-    FileSystem(FileSystemConfig),
-    S3(S3Config),
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum ObjectStoreConfigSerde {
-    FileSystem(FileSystemConfig),
-    S3(S3Config),
-}
-
-impl From<Option<ObjectStoreConfigSerde>> for ObjectStoreConfig {
-    fn from(value: Option<ObjectStoreConfigSerde>) -> Self {
-        match value {
-            None => ObjectStoreConfig::Memory,
-            Some(value) => match value {
-                ObjectStoreConfigSerde::S3(value) => ObjectStoreConfig::S3(value),
-                ObjectStoreConfigSerde::FileSystem(value) => ObjectStoreConfig::FileSystem(value),
-            },
-        }
-    }
-}
-
-impl From<ObjectStoreConfig> for Option<ObjectStoreConfigSerde> {
-    fn from(value: ObjectStoreConfig) -> Self {
-        match value {
-            ObjectStoreConfig::Memory => None,
-            ObjectStoreConfig::S3(value) => Some(ObjectStoreConfigSerde::S3(value)),
-            ObjectStoreConfig::FileSystem(value) => Some(ObjectStoreConfigSerde::FileSystem(value)),
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
 
+    use dashtool_common::ObjectStoreConfig;
     use serde::{Deserialize, Serialize};
 
-    use super::{BaseConfig, ObjectStoreConfig};
+    use super::BaseConfig;
 
     #[derive(Debug, Serialize, Deserialize)]
     pub struct Config {
