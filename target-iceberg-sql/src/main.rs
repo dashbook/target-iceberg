@@ -1,4 +1,7 @@
-use std::sync::Arc;
+use std::{
+    io::{self, BufReader},
+    sync::Arc,
+};
 
 use clap::Parser;
 use plugin::SqlTargetPlugin;
@@ -45,6 +48,69 @@ async fn main() -> Result<(), SingerIcebergError> {
 
         Ok(())
     } else {
-        ingest(plugin.clone()).await
+        ingest(plugin.clone(), &mut BufReader::new(io::stdin())).await
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::SqlTargetPlugin;
+    use anyhow::{anyhow, Error};
+    use iceberg_rust::catalog::identifier::Identifier;
+    use iceberg_rust::catalog::tabular::Tabular;
+    use std::fs::File;
+    use std::io::{BufReader, Write};
+    use std::sync::Arc;
+    use target_iceberg::catalog::select_streams;
+    use target_iceberg::ingest::ingest;
+    use target_iceberg::plugin::TargetPlugin;
+    use tempfile::tempdir;
+
+    #[tokio::test]
+    async fn test_ingest() -> Result<(), Error> {
+        let tempdir = tempdir()?;
+
+        let config_path = tempdir.path().join("config.json");
+
+        let mut config_file = File::create(config_path.clone())?;
+
+        config_file.write_all(
+            r#"
+            {
+            "image": "",
+            "streams": {
+                "people": "public.test.people"
+            },
+            "catalogUrl": "sqlite://",
+            "catalogName": "public"
+            }
+        "#
+            .as_bytes(),
+        )?;
+
+        let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
+
+        select_streams("../testdata/catalog.json", plugin.clone()).await?;
+
+        let input = File::open("../testdata/people.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let catalog = plugin.catalog().await?;
+
+        let table = if let Tabular::Table(table) = catalog
+            .load_table(&Identifier::parse("public.test.people")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 100);
+
+        Ok(())
     }
 }

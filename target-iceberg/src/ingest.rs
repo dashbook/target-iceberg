@@ -1,8 +1,4 @@
-use std::{
-    collections::HashMap,
-    io::{self, BufRead},
-    sync::Arc,
-};
+use std::{collections::HashMap, io::BufRead, sync::Arc};
 
 use anyhow::anyhow;
 use arrow::{

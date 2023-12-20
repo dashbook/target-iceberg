@@ -1,0 +1,165 @@
+{
+  "streams": [
+    {
+      "tap_stream_id": "people",
+      "replication_method": "FULL_TABLE",
+      "key_properties": [
+        "Index"
+      ],
+      "schema": {
+        "properties": {
+          "Index": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "User Id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "First Name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Last Name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Sex": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Email": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Phone": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Date of birth": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "Job Title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "type": "object"
+      },
+      "stream": "people",
+      "metadata": [
+        {
+          "breadcrumb": [
+            "properties",
+            "Index"
+          ],
+          "metadata": {
+            "inclusion": "automatic"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "User Id"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "First Name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Last Name"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Sex"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Email"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Phone"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Date of birth"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "Job Title"
+          ],
+          "metadata": {
+            "inclusion": "available"
+          }
+        },
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "inclusion": "available",
+            "selected": true,
+            "selected-by-default": true,
+            "table-key-properties": [
+              "Index"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

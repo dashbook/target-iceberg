@@ -1,4 +1,7 @@
-use std::sync::Arc;
+use std::{
+    io::{self, BufReader},
+    sync::Arc,
+};
 
 use clap::Parser;
 use plugin::DashbookTargetPlugin;
@@ -45,6 +48,6 @@ async fn main() -> Result<(), SingerIcebergError> {
 
         Ok(())
     } else {
-        ingest(plugin.clone()).await
+        ingest(plugin.clone(), &mut BufReader::new(io::stdin())).await
     }
 }
