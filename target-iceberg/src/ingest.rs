@@ -1,4 +1,8 @@
-use std::{collections::HashMap, io, sync::Arc};
+use std::{
+    collections::HashMap,
+    io::{self, BufRead},
+    sync::Arc,
+};
 
 use anyhow::anyhow;
 use arrow::{
@@ -28,7 +32,10 @@ use crate::{
 
 static ARROW_BATCH_SIZE: usize = 8192;
 
-pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergError> {
+pub async fn ingest(
+    plugin: Arc<dyn TargetPlugin>,
+    input: &mut dyn BufRead,
+) -> Result<(), SingerIcebergError> {
     let streams = plugin.streams();
     // Create sender and reviever for every stream
     let (senders, recievers): (
@@ -205,7 +212,7 @@ pub async fn ingest(plugin: Arc<dyn TargetPlugin>) -> Result<(), SingerIcebergEr
         });
 
     // Send messages to channel based on stream
-    for line in io::stdin().lines() {
+    for line in input.lines() {
         let line = line.unwrap();
 
         if line.starts_with("{") {
