@@ -3813,7 +3813,7 @@ dependencies = [
 [[package]]
 name = "target-iceberg"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/target-iceberg.git#8c66181f85fc358bc69daebf82b84219b423e46e"
+source = "git+https://github.com/dashbook/target-iceberg.git#6f82691cca8a4b9502b39cdd44b9eee2e438a73c"
 dependencies = [
  "anyhow",
  "arrow",
@@ -3855,7 +3855,6 @@ dependencies = [
  "anyhow",
  "async-trait",
  "clap",
- "dashbook-catalog",
  "dashtool-common",
  "futures",
  "iceberg-catalog-sql",
