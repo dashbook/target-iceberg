@@ -1912,7 +1912,7 @@ dependencies = [
 [[package]]
 name = "iceberg-catalog-sql"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#a65f4b9d858bd330376c77fd93501cee92e83936"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cc193667fefe2e4c6f5bc6bd63e0ef39f36c947c"
 dependencies = [
  "async-trait",
  "futures",
@@ -1927,7 +1927,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust"
 version = "0.1.3"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#a65f4b9d858bd330376c77fd93501cee92e83936"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cc193667fefe2e4c6f5bc6bd63e0ef39f36c947c"
 dependencies = [
  "apache-avro",
  "arrow",
@@ -1953,7 +1953,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust-spec"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#a65f4b9d858bd330376c77fd93501cee92e83936"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cc193667fefe2e4c6f5bc6bd63e0ef39f36c947c"
 dependencies = [
  "apache-avro",
  "arrow-schema",
@@ -3813,7 +3813,7 @@ dependencies = [
 [[package]]
 name = "target-iceberg"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/target-iceberg.git#6f82691cca8a4b9502b39cdd44b9eee2e438a73c"
+source = "git+https://github.com/dashbook/target-iceberg.git#450f0b04731cc98c23267ed48a1d0cbeef9eb78a"
 dependencies = [
  "anyhow",
  "arrow",
