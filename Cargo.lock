@@ -3813,7 +3813,7 @@ dependencies = [
 [[package]]
 name = "target-iceberg"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/target-iceberg.git#450f0b04731cc98c23267ed48a1d0cbeef9eb78a"
+source = "git+https://github.com/dashbook/target-iceberg.git#223e9f7671b4e3c31bcd1fed1d4a63fdee87f21f"
 dependencies = [
  "anyhow",
  "arrow",
