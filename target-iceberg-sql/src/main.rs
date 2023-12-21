@@ -67,7 +67,7 @@ mod tests {
     use tempfile::tempdir;
 
     #[tokio::test]
-    async fn test_ingest() -> Result<(), Error> {
+    async fn test_people() -> Result<(), Error> {
         let tempdir = tempdir()?;
 
         let config_path = tempdir.path().join("config.json");
@@ -100,6 +100,53 @@ mod tests {
 
         let table = if let Tabular::Table(table) = catalog
             .load_table(&Identifier::parse("public.test.people")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 100);
+
+        Ok(())
+    }
+    #[tokio::test]
+    async fn test_orders() -> Result<(), Error> {
+        let tempdir = tempdir()?;
+
+        let config_path = tempdir.path().join("config.json");
+
+        let mut config_file = File::create(config_path.clone())?;
+
+        config_file.write_all(
+            r#"
+            {
+            "image": "",
+            "streams": {
+                "inventory-orders": "public.inventory.orders"
+            },
+            "catalogUrl": "sqlite://",
+            "catalogName": "public"
+            }
+        "#
+            .as_bytes(),
+        )?;
+
+        let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
+
+        select_streams("../testdata/orders/catalog.json", plugin.clone()).await?;
+
+        let input = File::open("../testdata/orders/input.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let catalog = plugin.catalog().await?;
+
+        let table = if let Tabular::Table(table) = catalog
+            .load_table(&Identifier::parse("public.inventory.orders")?)
             .await?
         {
             Ok(table)
