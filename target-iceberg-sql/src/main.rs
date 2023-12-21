@@ -90,9 +90,9 @@ mod tests {
 
         let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
 
-        select_streams("../testdata/catalog.json", plugin.clone()).await?;
+        select_streams("../testdata/people/catalog.json", plugin.clone()).await?;
 
-        let input = File::open("../testdata/people.txt")?;
+        let input = File::open("../testdata/people/input.txt")?;
 
         ingest(plugin.clone(), &mut BufReader::new(input)).await?;
 
