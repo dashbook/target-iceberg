@@ -1,11 +1,7 @@
 use std::{collections::HashMap, io::BufRead, sync::Arc};
 
 use anyhow::anyhow;
-use arrow::{
-    datatypes::{DataType, Schema as ArrowSchema},
-    error::ArrowError,
-    json::ReaderBuilder,
-};
+use arrow::{datatypes::Schema as ArrowSchema, error::ArrowError, json::ReaderBuilder};
 use futures::{
     channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender},
     lock::Mutex,
@@ -20,11 +16,7 @@ use singer::messages::Message;
 
 use serde_json::Value as JsonValue;
 
-use crate::{
-    error::SingerIcebergError,
-    plugin::TargetPlugin,
-    schema::{convert_field, convert_schema, schema_to_arrow},
-};
+use crate::{error::SingerIcebergError, plugin::TargetPlugin};
 
 static ARROW_BATCH_SIZE: usize = 8192;
 
@@ -85,8 +77,6 @@ pub async fn ingest(
                     jsonschema::JSONSchema::compile(&serde_json::to_value(&schema.schema)?)
                         .unwrap();
 
-                let arrow_schema = Arc::new(schema_to_arrow(&schema.schema)?);
-
                 let catalog = plugin.catalog().await?;
 
                 let table = catalog
@@ -109,23 +99,6 @@ pub async fn ingest(
 
                 let partition_spec = table.metadata().default_partition_spec()?;
 
-                let conversions: Arc<HashMap<String, DataType>> = Arc::new(
-                    arrow_schema
-                        .all_fields()
-                        .into_iter()
-                        .filter_map(|arrow| {
-                            let table = table_arrow_schema.field_with_name(arrow.name()).ok()?;
-                            if arrow.data_type() == table.data_type() {
-                                None
-                            } else {
-                                Some((arrow.name().clone(), table.data_type().clone()))
-                            }
-                        })
-                        .collect(),
-                );
-
-                let intermediate_schema = Arc::new(convert_schema(&arrow_schema, &conversions)?);
-
                 let batches = messages
                     .filter_map(|message| async move {
                         match message {
@@ -135,27 +108,23 @@ pub async fn ingest(
                     })
                     // Check if record conforms to schema
                     .map(|message| {
-                        if if let Err(_) = compiled_schema.validate(&message.record) {
-                            false
-                        } else {
-                            true
-                        } {
-                            let mut value = message.record;
-                            for (name, field) in conversions.as_ref() {
-                                convert_field(&mut value, name, field)?;
-                            }
-                            Ok(value)
-                        } else {
-                            Err(SingerIcebergError::SchemaValidation)
-                        }
+                        compiled_schema
+                            .validate(&message.record)
+                            .map_err(|mut err| {
+                                let error = format!("{}", err.next().unwrap());
+                                SingerIcebergError::Anyhow(anyhow::Error::msg(error))
+                            })?;
+                        let value = message.record;
+
+                        Ok::<_, SingerIcebergError>(value)
                     })
                     .try_chunks(ARROW_BATCH_SIZE)
                     .map_err(|err| ArrowError::ExternalError(Box::new(err)))
                     // Convert messages to arrow batches
                     .and_then(|batches| {
-                        let intermediate_schema = intermediate_schema.clone();
+                        let table_arrow_schema = table_arrow_schema.clone();
                         async move {
-                            let mut decoder = ReaderBuilder::new(intermediate_schema.clone())
+                            let mut decoder = ReaderBuilder::new(table_arrow_schema.clone())
                                 .build_decoder()
                                 .unwrap();
                             decoder.serialize(&batches)?;
@@ -167,7 +136,6 @@ pub async fn ingest(
                     });
 
                 let location: String = strip_prefix(&table.metadata().location);
-
                 let bucket = parse_bucket(&table.metadata().location)?;
 
                 let files = write_parquet_partitioned(

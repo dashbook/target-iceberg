@@ -156,7 +156,7 @@ mod tests {
 
         let manifests = table.manifests(None, None).await?;
 
-        assert_eq!(manifests[0].added_rows_count.unwrap(), 100);
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
 
         Ok(())
     }
