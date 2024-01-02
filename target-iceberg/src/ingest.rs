@@ -141,14 +141,19 @@ pub async fn ingest(
                 let stream_state = {
                     let state = state.lock().await;
                     let state = match state.deref() {
-                        JsonValue::Object(object) => Ok(object),
+                        JsonValue::Object(object) => match object.get("bookmarks") {
+                            Some(JsonValue::Object(object)) => Ok(object),
+                            _ => Err(SingerIcebergError::Anyhow(anyhow!(
+                                "State value has to be an object."
+                            ))),
+                        },
                         _ => Err(SingerIcebergError::Anyhow(anyhow!(
                             "State value has to be an object."
                         ))),
                     }?;
 
                     state.get(&stream).and_then(|x| match x {
-                        JsonValue::String(s) => Some(s.clone()),
+                        JsonValue::Object(object) => Some(serde_json::to_string(&object).ok()?),
                         _ => None,
                     })
                 };
@@ -188,8 +193,6 @@ pub async fn ingest(
         }
     }
 
-    senders.values().for_each(|sender| sender.close_channel());
-
     state_sender.close_channel();
 
     state_reciever
@@ -205,6 +208,8 @@ pub async fn ingest(
             }
         })
         .await?;
+
+    senders.values().for_each(|sender| sender.close_channel());
 
     handle.await?;
 

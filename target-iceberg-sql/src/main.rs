@@ -161,6 +161,17 @@ mod tests {
 
         assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
 
+        let orders_version = orders_table
+            .metadata()
+            .properties
+            .get("singer-bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            orders_version,
+            r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002202,"xmin":null}"#
+        );
+
         let products_table = if let Tabular::Table(table) = catalog
             .load_table(&Identifier::parse("public.inventory.products")?)
             .await?
@@ -173,6 +184,17 @@ mod tests {
         let manifests = products_table.manifests(None, None).await?;
 
         assert_eq!(manifests[0].added_rows_count.unwrap(), 9);
+
+        let products_version = products_table
+            .metadata()
+            .properties
+            .get("singer-bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            products_version,
+            r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002235,"xmin":null}"#
+        );
         Ok(())
     }
 }
