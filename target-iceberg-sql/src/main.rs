@@ -126,7 +126,9 @@ mod tests {
             {
             "image": "",
             "streams": {
-                "inventory-orders": "public.inventory.orders"
+                "inventory-orders": "public.inventory.orders",
+                "inventory-customers": "public.inventory.customers",
+                "inventory-products": "public.inventory.products"
             },
             "catalogUrl": "sqlite://",
             "catalogName": "public"
@@ -137,15 +139,16 @@ mod tests {
 
         let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
 
-        select_streams("../testdata/orders/catalog.json", plugin.clone()).await?;
+        select_streams("../testdata/inventory/catalog.json", plugin.clone()).await?;
 
-        let input = File::open("../testdata/orders/input.txt")?;
+        let input = File::open("../testdata/inventory/input.txt")?;
 
         ingest(plugin.clone(), &mut BufReader::new(input)).await?;
 
         let catalog = plugin.catalog().await?;
 
-        let table = if let Tabular::Table(table) = catalog
+        let orders_table = if let Tabular::Table(table) = catalog
+            .clone()
             .load_table(&Identifier::parse("public.inventory.orders")?)
             .await?
         {
@@ -154,10 +157,22 @@ mod tests {
             Err(anyhow!("Not a table"))
         }?;
 
-        let manifests = table.manifests(None, None).await?;
+        let manifests = orders_table.manifests(None, None).await?;
 
         assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
 
+        let products_table = if let Tabular::Table(table) = catalog
+            .load_table(&Identifier::parse("public.inventory.products")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = products_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 9);
         Ok(())
     }
 }

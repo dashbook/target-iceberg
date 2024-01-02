@@ -39,7 +39,7 @@ mod tests {
     }
 
     #[test]
-    fn it_works() {
+    fn test_config() {
         let config: Config = serde_json::from_str(
             r#"
             {

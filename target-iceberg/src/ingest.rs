@@ -1,11 +1,11 @@
-use std::{collections::HashMap, io::BufRead, sync::Arc};
+use std::{collections::HashMap, io::BufRead, ops::Deref, sync::Arc};
 
 use anyhow::anyhow;
 use arrow::{datatypes::Schema as ArrowSchema, error::ArrowError, json::ReaderBuilder};
 use futures::{
     channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender},
     lock::Mutex,
-    stream, FutureExt, SinkExt, StreamExt, TryStreamExt,
+    stream, SinkExt, StreamExt, TryStreamExt,
 };
 use iceberg_rust::{
     arrow::write::write_parquet_partitioned,
@@ -39,16 +39,7 @@ pub async fn ingest(
 
     let (mut state_sender, state_reciever) = unbounded();
 
-    let state = Arc::new(Mutex::new(
-        state_reciever
-            .fold(JsonValue::Null, |acc, x| async move {
-                match x {
-                    Message::State(state) => state.value,
-                    _ => acc,
-                }
-            })
-            .boxed_local(),
-    ));
+    let state = Arc::new(Mutex::new(JsonValue::Null));
 
     // Process messages for every stream
     let handle = stream::iter(recievers.into_iter())
@@ -147,17 +138,20 @@ pub async fn ingest(
                 )
                 .await?;
 
-                let state = match state.lock().await.as_mut().await {
-                    JsonValue::Object(object) => Ok(object),
-                    _ => Err(SingerIcebergError::Anyhow(anyhow!(
-                        "State value has to be an object."
-                    ))),
-                }?;
+                let stream_state = {
+                    let state = state.lock().await;
+                    let state = match state.deref() {
+                        JsonValue::Object(object) => Ok(object),
+                        _ => Err(SingerIcebergError::Anyhow(anyhow!(
+                            "State value has to be an object."
+                        ))),
+                    }?;
 
-                let stream_state = state.get(&stream).and_then(|x| match x {
-                    JsonValue::String(s) => Some(s),
-                    _ => None,
-                });
+                    state.get(&stream).and_then(|x| match x {
+                        JsonValue::String(s) => Some(s.clone()),
+                        _ => None,
+                    })
+                };
 
                 let transaction = table
                     .new_transaction(plugin.branch().as_deref())
@@ -197,6 +191,20 @@ pub async fn ingest(
     senders.values().for_each(|sender| sender.close_channel());
 
     state_sender.close_channel();
+
+    state_reciever
+        .map(Ok::<_, SingerIcebergError>)
+        .try_for_each_concurrent(None, |value| {
+            let state = state.clone();
+            async move {
+                if let Message::State(value) = value {
+                    let mut state = state.lock().await;
+                    *state = value.value
+                }
+                Ok(())
+            }
+        })
+        .await?;
 
     handle.await?;
 
