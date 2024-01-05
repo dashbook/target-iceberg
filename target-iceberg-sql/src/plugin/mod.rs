@@ -32,27 +32,35 @@ pub(crate) struct SqlTargetPlugin {
 impl SqlTargetPlugin {
     pub async fn new(path: &str) -> Result<Self, SingerIcebergError> {
         let config_json = fs::read_to_string(path)?;
-        let config: Config = serde_json::from_str(&config_json)?;
+        let mut config: Config = serde_json::from_str(&config_json)?;
 
+        let mut full_bucket_name = config.base.bucket.clone();
         let object_store: Arc<dyn ObjectStore> = match &config.object_store {
             ObjectStoreConfig::Memory => Arc::new(InMemory::new()),
-            ObjectStoreConfig::S3(s3_config) => Arc::new(
-                AmazonS3Builder::new()
-                    .with_region(&s3_config.aws_region)
-                    .with_bucket_name(
-                        config
-                            .base
-                            .bucket
-                            .as_deref()
-                            .ok_or(SingerIcebergError::Anyhow(anyhow!("No bucket specified.")))?,
-                    )
-                    .with_access_key_id(&s3_config.aws_access_key_id)
-                    .with_secret_access_key(s3_config.aws_secret_access_key.as_ref().ok_or(
-                        SingerIcebergError::Anyhow(anyhow!("No aws secret access key given.")),
-                    )?)
-                    .build()?,
-            ),
+            ObjectStoreConfig::S3(s3_config) => {
+                let bucket_name = config
+                    .base
+                    .bucket
+                    .as_deref()
+                    .ok_or(SingerIcebergError::Anyhow(anyhow!("No bucket specified.")))?;
+
+                full_bucket_name =
+                    Some("s3://".to_owned() + bucket_name.trim_start_matches("s3://"));
+
+                Arc::new(
+                    AmazonS3Builder::new()
+                        .with_region(&s3_config.aws_region)
+                        .with_bucket_name(bucket_name)
+                        .with_access_key_id(&s3_config.aws_access_key_id)
+                        .with_secret_access_key(s3_config.aws_secret_access_key.as_ref().ok_or(
+                            SingerIcebergError::Anyhow(anyhow!("No aws secret access key given.")),
+                        )?)
+                        .build()?,
+                )
+            }
         };
+
+        config.base.bucket = full_bucket_name;
 
         let catalog = Arc::new(
             SqlCatalog::new(&config.catalog_url, &config.catalog_name, object_store)
@@ -72,12 +80,15 @@ impl TargetPlugin for SqlTargetPlugin {
     async fn catalog(&self) -> Result<Arc<dyn Catalog>, SingerIcebergError> {
         Ok(self.catalog.clone())
     }
+
     fn bucket(&self) -> Option<&str> {
         self.config.bucket.as_deref()
     }
+
     fn streams(&self) -> &HashMap<String, String> {
         &self.config.streams
     }
+
     fn branch(&self) -> &Option<String> {
         &self.config.branch
     }
