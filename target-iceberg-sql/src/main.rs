@@ -99,7 +99,7 @@ mod tests {
         let catalog = plugin.catalog().await?;
 
         let table = if let Tabular::Table(table) = catalog
-            .load_table(&Identifier::parse("public.test.people")?)
+            .load_table(&Identifier::parse("test.people")?)
             .await?
         {
             Ok(table)
@@ -149,7 +149,7 @@ mod tests {
 
         let orders_table = if let Tabular::Table(table) = catalog
             .clone()
-            .load_table(&Identifier::parse("public.inventory.orders")?)
+            .load_table(&Identifier::parse("inventory.orders")?)
             .await?
         {
             Ok(table)
@@ -173,7 +173,7 @@ mod tests {
         );
 
         let products_table = if let Tabular::Table(table) = catalog
-            .load_table(&Identifier::parse("public.inventory.products")?)
+            .load_table(&Identifier::parse("inventory.products")?)
             .await?
         {
             Ok(table)

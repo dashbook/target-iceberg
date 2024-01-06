@@ -70,10 +70,19 @@ pub async fn ingest(
 
                 let catalog = plugin.catalog().await?;
 
-                let table = catalog
-                    .clone()
-                    .load_table(&Identifier::parse(identifier)?)
-                    .await?;
+                let ident = Identifier::try_new(
+                    &identifier
+                        .split('.')
+                        .collect::<Vec<_>>()
+                        .into_iter()
+                        .rev()
+                        .take(2)
+                        .rev()
+                        .map(ToOwned::to_owned)
+                        .collect::<Vec<_>>(),
+                )?;
+
+                let table = catalog.clone().load_table(&ident).await?;
 
                 let mut table = if let Tabular::Table(table) = table {
                     table

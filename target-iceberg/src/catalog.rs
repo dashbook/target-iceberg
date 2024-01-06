@@ -59,7 +59,17 @@ pub async fn select_streams(
                     }])
                 };
 
-                let ident = Identifier::parse(&identifier)?;
+                let ident = Identifier::try_new(
+                    &identifier
+                        .split('.')
+                        .collect::<Vec<_>>()
+                        .into_iter()
+                        .rev()
+                        .take(2)
+                        .rev()
+                        .map(ToOwned::to_owned)
+                        .collect::<Vec<_>>(),
+                )?;
 
                 let catalog = plugin.catalog().await?;
 
