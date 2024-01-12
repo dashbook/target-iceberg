@@ -59,7 +59,7 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
                 .unwrap()
                 .into_inner()
                 .into_iter()
-                .map(|(key, value)| (key, Value::String(value))),
+                .map(|(key, value)| (key, serde_json::from_str(&value).unwrap())),
         )),
     )]));
 

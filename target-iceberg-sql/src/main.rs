@@ -64,6 +64,7 @@ mod tests {
     use target_iceberg::catalog::select_streams;
     use target_iceberg::ingest::ingest;
     use target_iceberg::plugin::TargetPlugin;
+    use target_iceberg::state::generate_state;
     use tempfile::tempdir;
 
     #[tokio::test]
@@ -170,6 +171,13 @@ mod tests {
         assert_eq!(
             orders_version,
             r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002202,"xmin":null}"#
+        );
+
+        let state = generate_state(plugin.clone()).await?;
+
+        assert_eq!(
+            state["bookmarks"]["inventory-orders"]["version"].to_string(),
+            "1703756002202"
         );
 
         let products_table = if let Tabular::Table(table) = catalog
