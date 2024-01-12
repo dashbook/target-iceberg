@@ -141,7 +141,7 @@ mod tests {
 
         select_streams("../testdata/inventory/catalog.json", plugin.clone()).await?;
 
-        let input = File::open("../testdata/inventory/input.txt")?;
+        let input = File::open("../testdata/inventory/input1.txt")?;
 
         ingest(plugin.clone(), &mut BufReader::new(input)).await?;
 
@@ -159,7 +159,7 @@ mod tests {
 
         let manifests = orders_table.manifests(None, None).await?;
 
-        assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 2);
 
         let orders_version = orders_table
             .metadata()
@@ -173,6 +173,7 @@ mod tests {
         );
 
         let products_table = if let Tabular::Table(table) = catalog
+            .clone()
             .load_table(&Identifier::parse("inventory.products")?)
             .await?
         {
@@ -183,7 +184,7 @@ mod tests {
 
         let manifests = products_table.manifests(None, None).await?;
 
-        assert_eq!(manifests[0].added_rows_count.unwrap(), 9);
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 5);
 
         let products_version = products_table
             .metadata()
@@ -195,6 +196,25 @@ mod tests {
             products_version,
             r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002235,"xmin":null}"#
         );
+
+        let input = File::open("../testdata/inventory/input2.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let orders_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_table(&Identifier::parse("inventory.orders")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = orders_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
+
         Ok(())
     }
 }
