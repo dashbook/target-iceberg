@@ -30,10 +30,11 @@ impl DashbookTargetPlugin {
         let config_json = fs::read_to_string(path)?;
         let config: Config = serde_json::from_str(&config_json)?;
 
-        let catalog_list = Arc::new(DashbookS3CatalogList::new(
-            &config.access_token,
-            &config.id_token,
-        ));
+        let catalog_list = Arc::new(
+            DashbookS3CatalogList::new(&config.access_token, &config.id_token)
+                .await
+                .map_err(anyhow::Error::msg)?,
+        );
 
         let catalog =
             catalog_list

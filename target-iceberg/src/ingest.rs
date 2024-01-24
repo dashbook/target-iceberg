@@ -9,8 +9,7 @@ use futures::{
 };
 use iceberg_rust::{
     arrow::write::write_parquet_partitioned,
-    catalog::{bucket::parse_bucket, identifier::Identifier, tabular::Tabular},
-    util::strip_prefix,
+    catalog::{identifier::Identifier, tabular::Tabular},
 };
 use singer::messages::Message;
 
@@ -97,8 +96,6 @@ pub async fn ingest(
                 let table_arrow_schema: Arc<ArrowSchema> =
                     Arc::new((&table_schema.fields).try_into()?);
 
-                let partition_spec = table.metadata().default_partition_spec()?;
-
                 let batches = messages
                     .filter_map(|message| async move {
                         match message {
@@ -135,17 +132,8 @@ pub async fn ingest(
                         }
                     });
 
-                let location: String = strip_prefix(&table.metadata().location);
-                let bucket = parse_bucket(&table.metadata().location)?;
-
-                let files = write_parquet_partitioned(
-                    &location,
-                    table_schema,
-                    partition_spec,
-                    batches,
-                    catalog.object_store(bucket).clone(),
-                )
-                .await?;
+                let files =
+                    write_parquet_partitioned(&table, batches, plugin.branch().as_deref()).await?;
 
                 let stream_state = {
                     let state = state.lock().await;
@@ -187,7 +175,7 @@ pub async fn ingest(
     for line in input.lines() {
         let line = line.unwrap();
 
-        if line.starts_with("{") {
+        if line.starts_with('{') {
             let message: Message = serde_json::from_str(&line).unwrap();
             match &message {
                 Message::Schema(schema) => {

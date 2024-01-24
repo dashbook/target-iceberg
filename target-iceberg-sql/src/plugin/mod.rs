@@ -47,16 +47,19 @@ impl SqlTargetPlugin {
                 full_bucket_name =
                     Some("s3://".to_owned() + bucket_name.trim_start_matches("s3://"));
 
-                Arc::new(
-                    AmazonS3Builder::new()
-                        .with_region(&s3_config.aws_region)
-                        .with_bucket_name(bucket_name)
-                        .with_access_key_id(&s3_config.aws_access_key_id)
-                        .with_secret_access_key(s3_config.aws_secret_access_key.as_ref().ok_or(
-                            SingerIcebergError::Anyhow(anyhow!("No aws secret access key given.")),
-                        )?)
-                        .build()?,
-                )
+                let mut builder = AmazonS3Builder::new()
+                    .with_region(&s3_config.aws_region)
+                    .with_bucket_name(bucket_name)
+                    .with_access_key_id(&s3_config.aws_access_key_id)
+                    .with_secret_access_key(s3_config.aws_secret_access_key.as_ref().ok_or(
+                        SingerIcebergError::Anyhow(anyhow!("No aws secret access key given.")),
+                    )?);
+
+                if let Some(endpoint) = &s3_config.aws_endpoint {
+                    builder = builder.with_endpoint(endpoint);
+                }
+
+                Arc::new(builder.build()?)
             }
         };
 
