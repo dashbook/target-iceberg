@@ -42,10 +42,10 @@ impl SqlTargetPlugin {
                     .base
                     .bucket
                     .as_deref()
-                    .ok_or(SingerIcebergError::Anyhow(anyhow!("No bucket specified.")))?;
+                    .ok_or(SingerIcebergError::Anyhow(anyhow!("No bucket specified.")))?
+                    .trim_start_matches("s3://");
 
-                full_bucket_name =
-                    Some("s3://".to_owned() + bucket_name.trim_start_matches("s3://"));
+                full_bucket_name = Some("s3://".to_owned() + bucket_name);
 
                 let mut builder = AmazonS3Builder::new()
                     .with_region(&s3_config.aws_region)
