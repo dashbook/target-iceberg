@@ -76,11 +76,11 @@ pub async fn select_streams(
                 if !catalog.table_exists(&ident).await? {
                     let arrow_schema = schema_to_arrow(&stream.schema)?;
 
-                    let schema = Schema {
-                        schema_id: 1,
-                        identifier_field_ids: None,
-                        fields: (&arrow_schema).try_into()?,
-                    };
+                    let schema = Schema::builder()
+                        .with_schema_id(1)
+                        .with_fields((&arrow_schema).try_into()?)
+                        .build()
+                        .map_err(iceberg_rust_spec::error::Error::from)?;
 
                     let base_path = plugin
                         .bucket()

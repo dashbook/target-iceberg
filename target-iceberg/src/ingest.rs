@@ -94,7 +94,7 @@ pub async fn ingest(
                     .current_schema(plugin.branch().as_deref())?;
 
                 let table_arrow_schema: Arc<ArrowSchema> =
-                    Arc::new((&table_schema.fields).try_into()?);
+                    Arc::new((table_schema.fields()).try_into()?);
 
                 let batches = messages
                     .filter_map(|message| async move {
@@ -132,8 +132,13 @@ pub async fn ingest(
                         }
                     });
 
-                let files =
-                    write_parquet_partitioned(&table, batches, plugin.branch().as_deref()).await?;
+                let files = write_parquet_partitioned(
+                    table.metadata(),
+                    batches,
+                    table.object_store(),
+                    plugin.branch().as_deref(),
+                )
+                .await?;
 
                 let stream_state = {
                     let state = state.lock().await;

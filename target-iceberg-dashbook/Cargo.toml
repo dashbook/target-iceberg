@@ -6,13 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0"
-async-trait = "0.1"
+anyhow = { workspace = true }
+async-trait = { workspace = true }
 clap = { version = "4", features = ["derive"] }
 dashbook-catalog = { git = "https://github.com/dashbook/dashbook-catalog.git" }
-futures = "0.3.28"
-iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+futures = { workspace = true }
+iceberg-rust = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 target-iceberg = { path = "../target-iceberg/" }
