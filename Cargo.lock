@@ -1932,7 +1932,7 @@ dependencies = [
 [[package]]
 name = "iceberg-catalog-sql"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#7335298622af90c31e1af66774fa572f8d495579"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cf68f27aaf6570445c0bd5533752ad8c4a779f00"
 dependencies = [
  "async-trait",
  "dashmap",
@@ -1949,7 +1949,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust"
 version = "0.1.3"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#7335298622af90c31e1af66774fa572f8d495579"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cf68f27aaf6570445c0bd5533752ad8c4a779f00"
 dependencies = [
  "apache-avro",
  "arrow",
@@ -1975,7 +1975,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust-spec"
 version = "0.1.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#7335298622af90c31e1af66774fa572f8d495579"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#cf68f27aaf6570445c0bd5533752ad8c4a779f00"
 dependencies = [
  "apache-avro",
  "arrow-schema",
@@ -2776,9 +2776,9 @@ dependencies = [
 
 [[package]]
 name = "pkg-config"
-version = "0.3.29"
+version = "0.3.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2900ede94e305130c13ddd391e0ab7cbaeb783945ae07a279c268cb05109c6cb"
+checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 [[package]]
 name = "postgrest"
