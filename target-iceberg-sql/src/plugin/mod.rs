@@ -9,7 +9,7 @@ use object_store::{aws::AmazonS3Builder, memory::InMemory, ObjectStore};
 use serde::{Deserialize, Serialize};
 use target_iceberg::{
     error::SingerIcebergError,
-    plugin::{BaseConfig, TargetPlugin},
+    plugin::{BaseConfig, StreamConfig, TargetPlugin},
 };
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -93,7 +93,7 @@ impl TargetPlugin for SqlTargetPlugin {
         self.config.bucket.as_deref()
     }
 
-    fn streams(&self) -> &HashMap<String, String> {
+    fn streams(&self) -> &HashMap<String, StreamConfig> {
         &self.config.streams
     }
 

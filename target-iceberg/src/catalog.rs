@@ -21,9 +21,9 @@ pub async fn select_streams(
 
     let streams = stream::iter(catalog.streams.into_iter())
         .filter_map(|stream| {
-            let streams = streams.clone();
+            let streams = streams;
             async move {
-                let idenfifier = streams.get(&stream.tap_stream_id).cloned()?;
+                let idenfifier = streams.get(&stream.tap_stream_id)?.identifier.clone();
                 Some((stream, idenfifier))
             }
         })

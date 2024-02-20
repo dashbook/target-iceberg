@@ -45,7 +45,7 @@ pub async fn ingest(
         .map(Ok::<_, SingerIcebergError>)
         .try_for_each_concurrent(None, |mut messages| {
             let plugin = plugin.clone();
-            let streams = streams.clone();
+            let streams = streams;
             let state = state.clone();
             async move {
                 let schema = match messages.next().await.ok_or(SingerIcebergError::Unknown)? {
@@ -55,13 +55,13 @@ pub async fn ingest(
 
                 let stream = schema.stream;
 
-                let identifier =
-                    streams
-                        .get(&stream)
-                        .ok_or(SingerIcebergError::Anyhow(anyhow!(
-                            "Stream {} not present in config",
-                            &stream
-                        )))?;
+                let identifier = &streams
+                    .get(&stream)
+                    .ok_or(SingerIcebergError::Anyhow(anyhow!(
+                        "Stream {} not present in config",
+                        &stream
+                    )))?
+                    .identifier;
 
                 let compiled_schema =
                     jsonschema::JSONSchema::compile(&serde_json::to_value(&schema.schema)?)

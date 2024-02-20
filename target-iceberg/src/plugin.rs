@@ -10,16 +10,21 @@ use crate::error::SingerIcebergError;
 pub trait TargetPlugin {
     async fn catalog(&self) -> Result<Arc<dyn Catalog>, SingerIcebergError>;
     fn bucket(&self) -> Option<&str>;
-    fn streams(&self) -> &HashMap<String, String>;
+    fn streams(&self) -> &HashMap<String, StreamConfig>;
     fn branch(&self) -> &Option<String>;
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BaseConfig {
     pub image: String,
-    pub streams: HashMap<String, String>,
+    pub streams: HashMap<String, StreamConfig>,
     pub bucket: Option<String>,
     pub branch: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct StreamConfig {
+    pub identifier: String,
 }
 
 #[cfg(test)]

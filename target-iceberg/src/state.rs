@@ -23,6 +23,7 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
 
                 let ident = Identifier::try_new(
                     &identifier
+                        .identifier
                         .split('.')
                         .collect::<Vec<_>>()
                         .into_iter()
