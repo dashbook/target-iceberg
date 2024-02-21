@@ -80,7 +80,7 @@ mod tests {
             {
             "image": "",
             "streams": {
-                "people": "public.test.people"
+                "people": { "identifier": "public.test.people" }
             },
             "catalogUrl": "sqlite://",
             "catalogName": "public"
@@ -127,9 +127,9 @@ mod tests {
             {
             "image": "",
             "streams": {
-                "inventory-orders": "public.inventory.orders",
-                "inventory-customers": "public.inventory.customers",
-                "inventory-products": "public.inventory.products"
+                "inventory-orders": { "identifier": "public.inventory.orders" },
+                "inventory-customers": { "identifier": "public.inventory.customers" },
+                "inventory-products": { "identifier": "public.inventory.products" }
             },
             "catalogUrl": "sqlite://",
             "catalogName": "public"
