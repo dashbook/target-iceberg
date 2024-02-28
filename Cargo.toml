@@ -12,10 +12,10 @@ resolver = "2"
 arrow = "50.0.0"
 async-trait = "0.1"
 object_store = { version = "0.9", features = ["aws", "gcp"] }
-dashtool-common = { git = "https://github.com/dashbook/dashtool" }
+dashtool-common = "0.1"
 futures = "0.3.30"
-iceberg-rust = { git = "https://github.com/JanKaul/iceberg-rust.git" }
-iceberg-rust-spec = { git = "https://github.com/JanKaul/iceberg-rust.git" }
+iceberg-rust = "0.2"
+iceberg-rust-spec = "0.2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 thiserror = "1"

@@ -34,7 +34,7 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
                         .collect::<Vec<_>>(),
                 )?;
 
-                let table = catalog.load_table(&ident).await?;
+                let table = catalog.load_tabular(&ident).await?;
 
                 let table = if let Tabular::Table(table) = table {
                     table

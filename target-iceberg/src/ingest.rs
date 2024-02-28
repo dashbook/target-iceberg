@@ -81,7 +81,7 @@ pub async fn ingest(
                         .collect::<Vec<_>>(),
                 )?;
 
-                let table = catalog.clone().load_table(&ident).await?;
+                let table = catalog.clone().load_tabular(&ident).await?;
 
                 let mut table = if let Tabular::Table(table) = table {
                     table
