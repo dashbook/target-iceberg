@@ -49,7 +49,7 @@ mod tests {
             r#"
             {
                 "image": "hello",
-                "streams": {"hello": "world"}
+                "streams": {"hello": { "identifier": "world" }}
             }
             "#,
         )

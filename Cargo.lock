@@ -3423,7 +3423,8 @@ checksum = "f27f6278552951f1f2b8cf9da965d10969b2efdea95a6ec47987ab46edfe263a"
 [[package]]
 name = "singer"
 version = "0.1.0"
-source = "git+https://github.com/dashbook/singer.git#91b93e181e558ea584ef5936d2e9109655593f1c"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "30759b12fbc075e8f30de27228b552b5a30206b0e1168cd676e0f2112942b40d"
 dependencies = [
  "serde",
  "serde_json",
