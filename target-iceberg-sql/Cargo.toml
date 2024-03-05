@@ -11,7 +11,7 @@ async-trait = { workspace = true }
 clap = { version = "4", features = ["derive"] }
 dashtool-common = { workspace = true }
 futures = { workspace = true }
-iceberg-catalog-sql = "0.2"
+iceberg-sql-catalog = "0.2"
 iceberg-rust = { workspace = true }
 object_store = { workspace = true }
 serde = { workspace = true }

@@ -3,8 +3,8 @@ use std::{collections::HashMap, fs, sync::Arc};
 use anyhow::anyhow;
 use async_trait::async_trait;
 use dashtool_common::ObjectStoreConfig;
-use iceberg_catalog_sql::SqlCatalog;
 use iceberg_rust::{catalog::Catalog, error::Error as IcebergError};
+use iceberg_sql_catalog::SqlCatalog;
 use object_store::{aws::AmazonS3Builder, memory::InMemory, ObjectStore};
 use serde::{Deserialize, Serialize};
 use target_iceberg::{
