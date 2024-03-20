@@ -416,16 +416,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c59bdb34bc650a32731b31bd8f0829cc15d24a708ee31559e0bb34f2bc320cba"
 
 [[package]]
-name = "atomic-write-file"
-version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a8204db279bf648d64fe845bd8840f78b39c8132ed4d6a4194c3b10d4b4cfb0b"
-dependencies = [
- "nix",
- "rand",
-]
-
-[[package]]
 name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1284,7 +1274,7 @@ dependencies = [
  "aws-sdk-sts 0.31.1",
  "base64-url",
  "iceberg-catalog-nessie",
- "iceberg-rust 0.2.0 (git+https://github.com/JanKaul/iceberg-rust.git)",
+ "iceberg-rust 0.2.0",
  "object_store 0.7.1",
  "postgrest",
  "reqwest",
@@ -1919,7 +1909,7 @@ source = "git+https://github.com/dashbook/iceberg-catalog-nessie-rust.git#7c5ba8
 dependencies = [
  "anyhow",
  "async-trait",
- "iceberg-rust 0.2.0 (git+https://github.com/JanKaul/iceberg-rust.git)",
+ "iceberg-rust 0.2.0",
  "object_store 0.7.1",
  "reqwest",
  "serde",
@@ -1933,8 +1923,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7b53f104d1226fdd2565630f4d3c76d649077b892c774b549f8e9387c7f2f0d"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#367bd82da8aa1743f7da293fbb122aebf65bcb44"
 dependencies = [
  "apache-avro",
  "arrow",
@@ -1942,7 +1931,7 @@ dependencies = [
  "derive_builder",
  "futures",
  "getrandom",
- "iceberg-rust-spec 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "iceberg-rust-spec 0.2.0",
  "itertools 0.10.5",
  "object_store 0.9.1",
  "parquet",
@@ -1959,8 +1948,9 @@ dependencies = [
 
 [[package]]
 name = "iceberg-rust"
-version = "0.2.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#367bd82da8aa1743f7da293fbb122aebf65bcb44"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a76f415b2849383ae342d6ded78bd75f6823fc6a5a4fec237808a7ddaa093c82"
 dependencies = [
  "apache-avro",
  "arrow",
@@ -1968,7 +1958,7 @@ dependencies = [
  "derive_builder",
  "futures",
  "getrandom",
- "iceberg-rust-spec 0.2.0 (git+https://github.com/JanKaul/iceberg-rust.git)",
+ "iceberg-rust-spec 0.3.0",
  "itertools 0.10.5",
  "object_store 0.9.1",
  "parquet",
@@ -1986,8 +1976,7 @@ dependencies = [
 [[package]]
 name = "iceberg-rust-spec"
 version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a0d36566e630940d1d33822de78531be527ca934c3624b1fd4c23e2efcb547a"
+source = "git+https://github.com/JanKaul/iceberg-rust.git#367bd82da8aa1743f7da293fbb122aebf65bcb44"
 dependencies = [
  "apache-avro",
  "arrow-schema",
@@ -2012,8 +2001,9 @@ dependencies = [
 
 [[package]]
 name = "iceberg-rust-spec"
-version = "0.2.0"
-source = "git+https://github.com/JanKaul/iceberg-rust.git#367bd82da8aa1743f7da293fbb122aebf65bcb44"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e86eb07f3e1dcc093c1fb7568757ff7eae86bb4f6688656ce4fd53dddeaaab74"
 dependencies = [
  "apache-avro",
  "arrow-schema",
@@ -2038,14 +2028,14 @@ dependencies = [
 
 [[package]]
 name = "iceberg-sql-catalog"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29b7584070f3ed1c518e0daedfee860562b5313d28a18984fbc9769c33d6e828"
+checksum = "cfefd0f7faeb68d31677e23bfb46e55c03049af7adb5d1e6396dc4fb16901504"
 dependencies = [
  "async-trait",
  "dashmap",
  "futures",
- "iceberg-rust 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "iceberg-rust 0.3.0",
  "object_store 0.9.1",
  "serde_json",
  "sqlx",
@@ -2424,18 +2414,6 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "tempfile",
-]
-
-[[package]]
-name = "nix"
-version = "0.28.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ab2156c4fce2f8df6c499cc1c763e4394b7482525bf2a9701c9d79d215f519e4"
-dependencies = [
- "bitflags 2.4.2",
- "cfg-if",
- "cfg_aliases",
- "libc",
 ]
 
 [[package]]
@@ -3610,9 +3588,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dba03c279da73694ef99763320dea58b51095dfe87d001b1d4b5fe78ba8763cf"
+checksum = "c9a2ccff1a000a5a59cd33da541d9f2fdcd9e6e8229cc200565942bff36d0aaa"
 dependencies = [
  "sqlx-core",
  "sqlx-macros",
@@ -3623,9 +3601,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-core"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d84b0a3c3739e220d94b3239fd69fb1f74bc36e16643423bd99de3b43c21bfbd"
+checksum = "24ba59a9342a3d9bab6c56c118be528b27c9b60e490080e9711a04dccac83ef6"
 dependencies = [
  "ahash 0.8.11",
  "atoi",
@@ -3633,7 +3611,6 @@ dependencies = [
  "bytes",
  "crc",
  "crossbeam-queue",
- "dotenvy",
  "either",
  "event-listener",
  "futures-channel",
@@ -3657,8 +3634,6 @@ dependencies = [
  "smallvec",
  "sqlformat",
  "thiserror",
- "tokio",
- "tokio-stream",
  "tracing",
  "url",
  "webpki-roots",
@@ -3666,9 +3641,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89961c00dc4d7dffb7aee214964b065072bff69e36ddb9e2c107541f75e4f2a5"
+checksum = "4ea40e2345eb2faa9e1e5e326db8c34711317d2b5e08d0d5741619048a803127"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3679,11 +3654,10 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros-core"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d0bd4519486723648186a08785143599760f7cc81c52334a55d6a83ea1e20841"
+checksum = "5833ef53aaa16d860e92123292f1f6a3d53c34ba8b1969f152ef1a7bb803f3c8"
 dependencies = [
- "atomic-write-file",
  "dotenvy",
  "either",
  "heck",
@@ -3700,15 +3674,14 @@ dependencies = [
  "sqlx-sqlite",
  "syn 1.0.109",
  "tempfile",
- "tokio",
  "url",
 ]
 
 [[package]]
 name = "sqlx-mysql"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e37195395df71fd068f6e2082247891bc11e3289624bbc776a0cdfa1ca7f1ea4"
+checksum = "1ed31390216d20e538e447a7a9b959e06ed9fc51c37b514b46eb758016ecd418"
 dependencies = [
  "atoi",
  "base64 0.21.7",
@@ -3748,9 +3721,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-postgres"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d6ac0ac3b7ccd10cc96c7ab29791a7dd236bd94021f31eec7ba3d46a74aa1c24"
+checksum = "7c824eb80b894f926f89a0b9da0c7f435d27cdd35b8c655b114e58223918577e"
 dependencies = [
  "atoi",
  "base64 0.21.7",
@@ -3775,7 +3748,6 @@ dependencies = [
  "rand",
  "serde",
  "serde_json",
- "sha1",
  "sha2",
  "smallvec",
  "sqlx-core",
@@ -3787,9 +3759,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-sqlite"
-version = "0.7.3"
+version = "0.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "210976b7d948c7ba9fced8ca835b11cbb2d677c59c79de41ac0d397e14547490"
+checksum = "b244ef0a8414da0bed4bb1910426e890b19e5e9bccc27ada6b797d05c55ae0aa"
 dependencies = [
  "atoi",
  "flume",
@@ -3939,8 +3911,8 @@ dependencies = [
  "chrono",
  "dashtool-common",
  "futures",
- "iceberg-rust 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "iceberg-rust-spec 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "iceberg-rust 0.3.0",
+ "iceberg-rust-spec 0.3.0",
  "jsonschema",
  "object_store 0.9.1",
  "serde",
@@ -3958,7 +3930,7 @@ dependencies = [
  "clap",
  "dashbook-catalog",
  "futures",
- "iceberg-rust 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "iceberg-rust 0.3.0",
  "serde",
  "serde_json",
  "target-iceberg",
@@ -3974,7 +3946,7 @@ dependencies = [
  "clap",
  "dashtool-common",
  "futures",
- "iceberg-rust 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "iceberg-rust 0.3.0",
  "iceberg-sql-catalog",
  "object_store 0.9.1",
  "serde",
