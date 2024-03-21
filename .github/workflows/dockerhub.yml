@@ -26,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: target-iceberg:sql
+          tags: dashbook/target-iceberg:sql
