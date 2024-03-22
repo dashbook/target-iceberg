@@ -20,14 +20,11 @@ pub async fn select_streams(
     let catalog: SingerCatalog = serde_json::from_str(&json)?;
 
     let streams = stream::iter(catalog.streams.into_iter())
-        .filter_map(|stream| {
-            let streams = streams;
-            async move {
-                let idenfifier = streams.get(&stream.tap_stream_id)?.identifier.clone();
-                Some((stream, idenfifier))
-            }
+        .filter_map(|stream| async move {
+            let config = streams.get(&stream.tap_stream_id)?;
+            Some((stream, config))
         })
-        .then(|(mut stream, identifier)| {
+        .then(|(mut stream, config)| {
             let plugin = plugin.clone();
             async move {
                 if stream.metadata.is_some() {
@@ -37,30 +34,41 @@ pub async fn select_streams(
                             if let Some(metadata) = opt {
                                 if let Value::Object(metadata) = &mut metadata.metadata {
                                     metadata.insert("selected".to_string(), Value::Bool(true));
+                                    metadata.insert(
+                                        "replication-method".to_owned(),
+                                        Value::String(serde_json::to_string(&config.replication)?),
+                                    );
                                 }
                             }
                         } else {
                             vec.push(Metadata {
-                                metadata: Value::Object(Map::from_iter(vec![(
-                                    "selected".to_string(),
-                                    Value::Bool(true),
-                                )])),
+                                metadata: Value::Object(Map::from_iter(vec![
+                                    ("selected".to_string(), Value::Bool(true)),
+                                    (
+                                        "replication-method".to_owned(),
+                                        Value::String(serde_json::to_string(&config.replication)?),
+                                    ),
+                                ])),
                                 breadcrumb: vec![],
                             })
                         }
                     }
                 } else {
                     stream.metadata = Some(vec![Metadata {
-                        metadata: Value::Object(Map::from_iter(vec![(
-                            "selected".to_string(),
-                            Value::Bool(true),
-                        )])),
+                        metadata: Value::Object(Map::from_iter(vec![
+                            ("selected".to_string(), Value::Bool(true)),
+                            (
+                                "replication-method".to_owned(),
+                                Value::String(serde_json::to_string(&config.replication)?),
+                            ),
+                        ])),
                         breadcrumb: vec![],
                     }])
                 };
 
                 let ident = Identifier::try_new(
-                    &identifier
+                    &config
+                        .identifier
                         .split('.')
                         .collect::<Vec<_>>()
                         .into_iter()
@@ -88,7 +96,7 @@ pub async fn select_streams(
                         .trim_end_matches("/")
                         .to_string()
                         + "/"
-                        + &identifier.replace(".", "/");
+                        + &config.identifier.replace(".", "/");
 
                     let mut builder = TableBuilder::new(ident, catalog)?;
                     builder

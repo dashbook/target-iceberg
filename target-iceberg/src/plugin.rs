@@ -25,6 +25,17 @@ pub struct BaseConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StreamConfig {
     pub identifier: String,
+    #[serde(default)]
+    pub replication: Replication,
+}
+
+#[derive(Debug, Serialize, Deserialize, Default)]
+#[serde(rename = "SCREAMING_SNAKE_CASE")]
+pub enum Replication {
+    #[default]
+    FullTable,
+    Incremental,
+    LogBased,
 }
 
 #[cfg(test)]

@@ -3634,6 +3634,8 @@ dependencies = [
  "smallvec",
  "sqlformat",
  "thiserror",
+ "tokio",
+ "tokio-stream",
  "tracing",
  "url",
  "webpki-roots",
@@ -3674,6 +3676,7 @@ dependencies = [
  "sqlx-sqlite",
  "syn 1.0.109",
  "tempfile",
+ "tokio",
  "url",
 ]
 
@@ -3951,6 +3954,7 @@ dependencies = [
  "object_store 0.9.1",
  "serde",
  "serde_json",
+ "sqlx",
  "target-iceberg",
  "tempfile",
  "tokio",
