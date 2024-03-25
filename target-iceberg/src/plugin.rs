@@ -30,11 +30,13 @@ pub struct StreamConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
-#[serde(rename = "SCREAMING_SNAKE_CASE")]
 pub enum Replication {
     #[default]
+    #[serde(rename = "FULL_TABLE")]
     FullTable,
+    #[serde(rename = "INCREMENTAL")]
     Incremental,
+    #[serde(rename = "LOG_BASED")]
     LogBased,
 }
 
@@ -60,7 +62,7 @@ mod tests {
             r#"
             {
                 "image": "hello",
-                "streams": {"hello": { "identifier": "world" }}
+                "streams": {"hello": { "identifier": "world", "replication": "LOG_BASED" }}
             }
             "#,
         )
