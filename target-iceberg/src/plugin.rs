@@ -43,9 +43,9 @@ pub enum Replication {
 impl Display for Replication {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Replication::FullTable => write!("FULL_TABLE"),
-            Replication::Incremental => write!("INCREMENTAL"),
-            Replication::LogBased => write!("LOG_BASED"),
+            Replication::FullTable => write!(f, "FULL_TABLE"),
+            Replication::Incremental => write!(f, "INCREMENTAL"),
+            Replication::LogBased => write!(f, "LOG_BASED"),
         }
     }
 }
