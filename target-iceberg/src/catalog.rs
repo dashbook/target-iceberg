@@ -36,7 +36,7 @@ pub async fn select_streams(
                                     metadata.insert("selected".to_string(), Value::Bool(true));
                                     metadata.insert(
                                         "replication-method".to_owned(),
-                                        Value::String(serde_json::to_string(&config.replication)?),
+                                        Value::String(config.replication_method.to_string()),
                                     );
                                 }
                             }
@@ -46,7 +46,7 @@ pub async fn select_streams(
                                     ("selected".to_string(), Value::Bool(true)),
                                     (
                                         "replication-method".to_owned(),
-                                        Value::String(serde_json::to_string(&config.replication)?),
+                                        Value::String(config.replication_method.to_string()),
                                     ),
                                 ])),
                                 breadcrumb: vec![],
@@ -59,7 +59,7 @@ pub async fn select_streams(
                             ("selected".to_string(), Value::Bool(true)),
                             (
                                 "replication-method".to_owned(),
-                                Value::String(serde_json::to_string(&config.replication)?),
+                                Value::String(config.replication_method.to_string()),
                             ),
                         ])),
                         breadcrumb: vec![],

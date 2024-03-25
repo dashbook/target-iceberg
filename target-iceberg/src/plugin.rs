@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{collections::HashMap, fmt::Display, sync::Arc};
 
 use async_trait::async_trait;
 use iceberg_rust::catalog::Catalog;
@@ -25,8 +25,8 @@ pub struct BaseConfig {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StreamConfig {
     pub identifier: String,
-    #[serde(default)]
-    pub replication: Replication,
+    #[serde(default, rename = "replication-method")]
+    pub replication_method: Replication,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
@@ -38,6 +38,16 @@ pub enum Replication {
     Incremental,
     #[serde(rename = "LOG_BASED")]
     LogBased,
+}
+
+impl Display for Replication {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Replication::FullTable => write!("FULL_TABLE"),
+            Replication::Incremental => write!("INCREMENTAL"),
+            Replication::LogBased => write!("LOG_BASED"),
+        }
+    }
 }
 
 #[cfg(test)]
