@@ -53,16 +53,19 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
         })
         .await?;
 
-    let state = Value::Object(Map::from_iter(vec![(
-        "bookmarks".to_string(),
-        Value::Object(Map::from_iter(
-            Arc::try_unwrap(bookmarks)
-                .unwrap()
-                .into_inner()
-                .into_iter()
-                .map(|(key, value)| (key, serde_json::from_str(&value).unwrap())),
-        )),
-    )]));
+    let state = Value::Object(Map::from_iter(vec![
+        ("currently_syncing".to_owned(), Value::Null),
+        (
+            "bookmarks".to_string(),
+            Value::Object(Map::from_iter(
+                Arc::try_unwrap(bookmarks)
+                    .unwrap()
+                    .into_inner()
+                    .into_iter()
+                    .map(|(key, value)| (key, serde_json::from_str(&value).unwrap())),
+            )),
+        ),
+    ]));
 
     Ok(state)
 }
