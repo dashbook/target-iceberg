@@ -140,37 +140,41 @@ pub async fn ingest(
                 )
                 .await?;
 
-                let stream_state = {
-                    let state = state.lock().await;
-                    let state = match state.deref() {
-                        JsonValue::Object(object) => match object.get("bookmarks") {
-                            Some(JsonValue::Object(object)) => Ok(object),
+                if !files.is_empty() {
+                    let stream_state = {
+                        let state = state.lock().await;
+                        let state = match state.deref() {
+                            JsonValue::Object(object) => match object.get("bookmarks") {
+                                Some(JsonValue::Object(object)) => Ok(object),
+                                _ => Err(SingerIcebergError::Anyhow(anyhow!(
+                                    "State value has to be an object."
+                                ))),
+                            },
                             _ => Err(SingerIcebergError::Anyhow(anyhow!(
                                 "State value has to be an object."
                             ))),
-                        },
-                        _ => Err(SingerIcebergError::Anyhow(anyhow!(
-                            "State value has to be an object."
-                        ))),
-                    }?;
+                        }?;
 
-                    state.get(&stream).and_then(|x| match x {
-                        JsonValue::Object(object) => Some(serde_json::to_string(&object).ok()?),
-                        _ => None,
-                    })
-                };
+                        state.get(&stream).and_then(|x| match x {
+                            JsonValue::Object(object) => Some(serde_json::to_string(&object).ok()?),
+                            _ => None,
+                        })
+                    };
 
-                let transaction = table
-                    .new_transaction(plugin.branch().as_deref())
-                    .append(files);
+                    let transaction = table
+                        .new_transaction(plugin.branch().as_deref())
+                        .append(files);
 
-                let transaction = match stream_state {
-                    Some(x) => transaction
-                        .update_properties(vec![("singer-bookmark".to_string(), x.to_string())]),
-                    None => transaction,
-                };
+                    let transaction = match stream_state {
+                        Some(x) => transaction.update_properties(vec![(
+                            "singer-bookmark".to_string(),
+                            x.to_string(),
+                        )]),
+                        None => transaction,
+                    };
 
-                transaction.commit().await?;
+                    transaction.commit().await?;
+                }
 
                 Ok(())
             }
