@@ -1,5 +1,5 @@
 use arrow::datatypes::{DataType, Field, Schema, SchemaBuilder, TimeUnit};
-use singer::schema::{Compound, DateFormat, JsonSchema, Primitive, Type};
+use singer::schema::{Compound, Format, JsonSchema, Primitive, Type};
 
 use crate::error::SingerIcebergError;
 
@@ -22,13 +22,13 @@ pub fn schema_to_arrow(schema: &JsonSchema) -> Result<Schema, SingerIcebergError
                     };
                     Field::new(trim_name(name), primitive_to_arrow(value), true)
                 }
-                Type::PrimitiveDate { r#type: _, format } => {
+                Type::PrimitiveFormat { r#type: _, format } => {
                     Field::new(trim_name(name), primitivedate_to_arrow(format), false)
                 }
-                Type::SingleDate { r#type: _, format } => {
+                Type::SingleFormat { r#type: _, format } => {
                     Field::new(trim_name(name), primitivedate_to_arrow(format), false)
                 }
-                Type::VariantDate { r#type: _, format } => {
+                Type::VariantFormat { r#type: _, format } => {
                     Field::new(trim_name(name), primitivedate_to_arrow(format), true)
                 }
                 Type::Compound(_) => Field::new(trim_name(name), DataType::Null, true),
@@ -58,8 +58,10 @@ pub fn primitive_to_arrow(input: &Primitive) -> DataType {
 }
 
 #[inline]
-pub fn primitivedate_to_arrow(input: &DateFormat) -> DataType {
+pub fn primitivedate_to_arrow(input: &Format) -> DataType {
     match input {
-        DateFormat::DateTime => DataType::Timestamp(TimeUnit::Microsecond, None),
+        Format::Time => DataType::Time32(TimeUnit::Millisecond),
+        Format::Date => DataType::Date32,
+        Format::DateTime => DataType::Timestamp(TimeUnit::Microsecond, None),
     }
 }
