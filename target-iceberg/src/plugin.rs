@@ -16,7 +16,6 @@ pub trait TargetPlugin {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BaseConfig {
-    pub image: String,
     pub streams: HashMap<String, StreamConfig>,
     pub bucket: Option<String>,
     pub branch: Option<String>,
@@ -71,7 +70,6 @@ mod tests {
         let config: Config = serde_json::from_str(
             r#"
             {
-                "image": "hello",
                 "streams": {"hello": { "identifier": "world", "replication": "LOG_BASED" }}
             }
             "#,

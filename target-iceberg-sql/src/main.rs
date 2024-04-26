@@ -78,7 +78,6 @@ mod tests {
         config_file.write_all(
             r#"
             {
-            "image": "",
             "streams": {
                 "people": { "identifier": "public.test.people" }
             },
@@ -125,7 +124,6 @@ mod tests {
         config_file.write_all(
             r#"
             {
-            "image": "",
             "streams": {
                 "inventory-orders": { "identifier": "public.inventory.orders" },
                 "inventory-customers": { "identifier": "public.inventory.customers" },
