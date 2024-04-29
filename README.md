@@ -64,8 +64,12 @@ The configuration consists of 3 parts:
 
 The general parameters apply to each catalog and object store.
 
-- `streams`: A map of streams to replicate. Each stream is a map with the fields: `identifier`, `replication-method`(optional)
-- `bucket` (optional): Object store bucket where the iceberg tables should be stored
+| Parameter | Description | 
+|-|-|  
+| `streams` | A map of streams to replicate. Each stream is a map with the fields: `identifier`, `replication-method`(optional) |
+| `bucket` (optional) | Object store bucket where the iceberg tables should be stored (optional) |
+
+
 
 ### Catalog parameters
 
@@ -73,8 +77,11 @@ Only one set of catalog parameters should be used in the configuration. Choose w
 
 #### SQL catalog
 
-- `catalogName`: The name of the catalog
-- `catalogUrl`: The connection url of the catalog
+| Parameter | Description |
+|-|-|  
+| `catalogName` | The name of the catalog |
+| `catalogUrl` | The connection url of the catalog |
+
 
 ### Object store parameters
 
@@ -82,11 +89,14 @@ Only one set of object store parameters should be used in the configuration. Cho
 
 #### AWS S3
 
-- `awsRegion`: The region of the bucket
-- `awsAccessKeyId`: The access key id
-- `awsSecretAccessKey`: The secret access key
-- `awsEndpoint` (optional): The endpoint of the object store
-- `awsAllowHttp` (optional): Allow http connections to the object store
+| Parameter | Description |
+|-|-|  
+| `awsRegion` | The region of the bucket |
+| `awsAccessKeyId` | The access key id |
+| `awsSecretAccessKey` | The secret access key |
+| `awsEndpoint` (optional) | The endpoint of the object store |
+| `awsAllowHttp` (optional) | Allow http connections to the object store |
+
 
 
 ## Docker containers
