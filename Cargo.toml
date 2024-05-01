@@ -2,7 +2,6 @@
 
 members = [
     "target-iceberg",
-    "target-iceberg-dashbook",
     "target-iceberg-sql",
 ]
 
