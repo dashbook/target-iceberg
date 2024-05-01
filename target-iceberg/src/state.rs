@@ -8,8 +8,6 @@ use crate::{error::SingerIcebergError, plugin::TargetPlugin};
 
 pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, SingerIcebergError> {
     let streams = plugin.streams();
-    // let catalogs: Arc<Mutex<HashMap<String, Arc<dyn Catalog>>>> =
-    //     Arc::new(Mutex::new(HashMap::new()));
 
     let bookmarks: Arc<Mutex<HashMap<String, String>>> = Arc::new(Mutex::new(HashMap::new()));
 

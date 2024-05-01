@@ -8,6 +8,7 @@ use plugin::SqlTargetPlugin;
 use target_iceberg::{
     catalog::select_streams, error::SingerIcebergError, ingest::ingest, state::generate_state,
 };
+use tracing::{debug, info};
 
 mod plugin;
 
@@ -27,27 +28,41 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), SingerIcebergError> {
+    tracing_subscriber::fmt()
+        .with_writer(std::io::stderr)
+        .init();
+
     let args = Args::parse();
 
     let plugin = Arc::new(SqlTargetPlugin::new(&args.config).await?);
 
     if args.state {
+        info!("Generating state");
+
         let state = generate_state(plugin.clone()).await?;
 
         let json = serde_json::to_string(&state)?;
+
+        debug!("{}", &json);
 
         print!("{}", &json);
 
         Ok(())
     } else if let Some(cat) = args.catalog {
+        info!("Generating catalog");
+
         let catalog = select_streams(&cat, plugin.clone()).await?;
 
         let json = serde_json::to_string(&catalog)?;
+
+        debug!("{}", &json);
 
         print!("{}", &json);
 
         Ok(())
     } else {
+        info!("Start syncing ...");
+
         ingest(plugin.clone(), &mut BufReader::new(io::stdin())).await
     }
 }

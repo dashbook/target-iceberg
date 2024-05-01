@@ -24,3 +24,5 @@ singer = "0.3"
 thiserror = { workspace = true }
 anyhow = { workspace = true }
 chrono = "0.4"
+tracing = { workspace = true }
+tracing-futures = { workspace = true }

@@ -14,6 +14,7 @@ use iceberg_rust::{
 use singer::messages::Message;
 
 use serde_json::Value as JsonValue;
+use tracing::{debug, debug_span, Instrument};
 
 use crate::{error::SingerIcebergError, plugin::TargetPlugin};
 
@@ -54,6 +55,9 @@ pub async fn ingest(
                 }?;
 
                 let stream = schema.stream;
+
+                debug!("Syncing stream {}", &stream);
+                debug!("Schema: {}", serde_json::to_string(&schema.schema)?);
 
                 let identifier = &streams
                     .get(&stream)
@@ -165,6 +169,10 @@ pub async fn ingest(
                         .new_transaction(plugin.branch().as_deref())
                         .append(files);
 
+                    if let Some(state) = &stream_state {
+                        debug!("State of stream {}: {}", &stream, &state);
+                    }
+
                     let transaction = match stream_state {
                         Some(x) => transaction.update_properties(vec![(
                             "singer-bookmark".to_string(),
@@ -178,6 +186,7 @@ pub async fn ingest(
 
                 Ok(())
             }
+            .instrument(debug_span!("sync_stream"))
         });
 
     // Send messages to channel based on stream
