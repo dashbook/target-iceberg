@@ -9,6 +9,7 @@ use target_iceberg::{
     catalog::select_streams, error::SingerIcebergError, ingest::ingest, state::generate_state,
 };
 use tracing::{debug, info};
+use tracing_subscriber::EnvFilter;
 
 mod plugin;
 
@@ -30,6 +31,7 @@ struct Args {
 async fn main() -> Result<(), SingerIcebergError> {
     tracing_subscriber::fmt()
         .with_writer(std::io::stderr)
+        .with_env_filter(EnvFilter::from_default_env())
         .init();
 
     let args = Args::parse();
