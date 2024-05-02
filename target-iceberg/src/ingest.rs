@@ -125,9 +125,8 @@ pub async fn ingest(
                     .and_then(|batches| {
                         let table_arrow_schema = table_arrow_schema.clone();
                         async move {
-                            let mut decoder = ReaderBuilder::new(table_arrow_schema.clone())
-                                .build_decoder()
-                                .unwrap();
+                            let mut decoder =
+                                ReaderBuilder::new(table_arrow_schema.clone()).build_decoder()?;
                             decoder.serialize(&batches)?;
                             let record_batch = decoder.flush()?.ok_or(ArrowError::MemoryError(
                                 "Data of recordbatch is empty.".to_string(),
@@ -191,16 +190,30 @@ pub async fn ingest(
 
     // Send messages to channel based on stream
     for line in input.lines() {
-        let line = line.unwrap();
+        let line = line?;
 
         if line.starts_with('{') {
-            let message: Message = serde_json::from_str(&line).unwrap();
+            let message: Message = serde_json::from_str(&line)?;
             match &message {
                 Message::Schema(schema) => {
-                    senders.get(&schema.stream).unwrap().send(message).await?
+                    senders
+                        .get(&schema.stream)
+                        .ok_or(SingerIcebergError::Anyhow(anyhow!(
+                            "Stream {} not found.",
+                            &schema.stream,
+                        )))?
+                        .send(message)
+                        .await?
                 }
                 Message::Record(record) => {
-                    senders.get(&record.stream).unwrap().send(message).await?
+                    senders
+                        .get(&record.stream)
+                        .ok_or(SingerIcebergError::Anyhow(anyhow!(
+                            "Stream {} not found.",
+                            &record.stream,
+                        )))?
+                        .send(message)
+                        .await?
                 }
                 Message::State(_) => state_sender.send(message).await?,
                 Message::ActivateVersion(_) => (),

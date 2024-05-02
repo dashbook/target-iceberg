@@ -22,9 +22,10 @@ pub struct BaseConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct StreamConfig {
     pub identifier: String,
-    #[serde(default, rename = "replication-method")]
+    #[serde(default)]
     pub replication_method: Replication,
 }
 
@@ -70,7 +71,7 @@ mod tests {
         let config: Config = serde_json::from_str(
             r#"
             {
-                "streams": {"hello": { "identifier": "world", "replication": "LOG_BASED" }}
+                "streams": {"hello": { "identifier": "world", "replicationMethod": "LOG_BASED" }}
             }
             "#,
         )

@@ -33,15 +33,15 @@ Example:
     "streams": {
       "inventory-orders": { 
         "identifier": "bronze.inventory.orders",
-        "replication-method": "LOG_BASED"
+        "replicationMethod": "LOG_BASED"
       },
       "inventory-customers": { 
         "identifier": "bronze.inventory.customers",
-        "replication-method": "LOG_BASED"
+        "replicationMethod": "LOG_BASED"
       },
       "inventory-products": { 
         "identifier": "bronze.inventory.products",
-        "replication-method": "LOG_BASED"
+        "replicationMethod": "LOG_BASED"
       }
     },
     "bucket": "s3://example-postgres",
@@ -66,7 +66,7 @@ The general parameters apply to each catalog and object store.
 
 | Parameter | Description | 
 |-|-|  
-| `streams` | A map of streams to replicate. Each stream is a map with the fields: `identifier`, `replication-method`(optional) |
+| `streams` | A map of streams to replicate. Each stream is a map with the fields: `identifier`, `replicationMethod`(optional) |
 | `bucket` (optional) | Object store bucket where the iceberg tables should be stored (optional) |
 
 
