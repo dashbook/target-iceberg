@@ -16,7 +16,7 @@ use singer::messages::Message;
 use serde_json::Value as JsonValue;
 use tracing::{debug, debug_span, Instrument};
 
-use crate::{error::SingerIcebergError, plugin::TargetPlugin};
+use crate::{error::SingerIcebergError, plugin::TargetPlugin, state::SINGER_BOOKMARK};
 
 static ARROW_BATCH_SIZE: usize = 8192;
 
@@ -173,10 +173,8 @@ pub async fn ingest(
                     }
 
                     let transaction = match stream_state {
-                        Some(x) => transaction.update_properties(vec![(
-                            "singer-bookmark".to_string(),
-                            x.to_string(),
-                        )]),
+                        Some(x) => transaction
+                            .update_properties(vec![(SINGER_BOOKMARK.to_string(), x.to_string())]),
                         None => transaction,
                     };
 

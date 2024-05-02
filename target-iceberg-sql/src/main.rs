@@ -180,7 +180,7 @@ mod tests {
         let orders_version = orders_table
             .metadata()
             .properties
-            .get("singer-bookmark")
+            .get("singer.bookmark")
             .expect("Failed to get bookmark");
 
         assert_eq!(
@@ -212,7 +212,7 @@ mod tests {
         let products_version = products_table
             .metadata()
             .properties
-            .get("singer-bookmark")
+            .get("singer.bookmark")
             .expect("Failed to get bookmark");
 
         assert_eq!(

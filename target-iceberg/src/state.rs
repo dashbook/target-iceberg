@@ -6,6 +6,8 @@ use serde_json::{Map, Value};
 
 use crate::{error::SingerIcebergError, plugin::TargetPlugin};
 
+pub(crate) static SINGER_BOOKMARK: &str = "singer.bookmark";
+
 pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, SingerIcebergError> {
     let streams = plugin.streams();
 
@@ -40,7 +42,7 @@ pub async fn generate_state(plugin: Arc<dyn TargetPlugin>) -> Result<Value, Sing
                     return Err(SingerIcebergError::Unknown);
                 };
 
-                if let Some(bookmark) = table.metadata().properties.get("singer-bookmark") {
+                if let Some(bookmark) = table.metadata().properties.get(SINGER_BOOKMARK) {
                     bookmarks
                         .lock()
                         .await
