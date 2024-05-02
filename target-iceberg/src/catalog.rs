@@ -1,9 +1,11 @@
 use std::{fs, sync::Arc};
 
+use anyhow::anyhow;
 use futures::{stream, StreamExt, TryStreamExt};
 use iceberg_rust::{
     catalog::identifier::Identifier, spec::schema::Schema, table::table_builder::TableBuilder,
 };
+use iceberg_rust_spec::spec::partition::{PartitionField, PartitionSpec, Transform};
 use serde_json::{Map, Value};
 use singer::catalog::{Catalog as SingerCatalog, Metadata, Stream as SingerStream};
 
@@ -99,6 +101,39 @@ pub async fn select_streams(
                         + &config.identifier.replace(".", "/");
 
                     let mut builder = TableBuilder::new(ident, catalog)?;
+
+                    if let Some(columns) = &config.partition_by {
+                        builder.with_partition_spec((
+                            1,
+                            PartitionSpec::builder()
+                                .with_spec_id(1)
+                                .with_fields(
+                                    columns
+                                        .iter()
+                                        .enumerate()
+                                        .map(|(i, (column, transform))| {
+                                            let field = schema.fields().get_name(column).ok_or(
+                                                SingerIcebergError::Anyhow(anyhow!(
+                                                    "Field {} doesn't exist in schema.",
+                                                    column
+                                                )),
+                                            )?;
+                                            let transform =
+                                                serde_json::from_str::<Transform>(transform)?;
+                                            Ok::<_, SingerIcebergError>(PartitionField::new(
+                                                field.id,
+                                                1000 + i as i32,
+                                                column,
+                                                transform,
+                                            ))
+                                        })
+                                        .collect::<Result<_, _>>()?,
+                                )
+                                .build()
+                                .map_err(iceberg_rust_spec::error::Error::from)?,
+                        ));
+                    }
+
                     builder
                         .location(&base_path)
                         .with_schema((1, schema))

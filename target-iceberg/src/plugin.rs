@@ -27,6 +27,8 @@ pub struct StreamConfig {
     pub identifier: String,
     #[serde(default)]
     pub replication_method: Replication,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub partition_by: Option<HashMap<String, String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Default)]
