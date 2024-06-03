@@ -13,7 +13,7 @@ pub enum SingerIcebergError {
     #[error(transparent)]
     Iceberg(#[from] iceberg_rust::error::Error),
     #[error(transparent)]
-    IcebergSpec(#[from] iceberg_rust_spec::error::Error),
+    IcebergSpec(#[from] iceberg_rust::spec::error::Error),
     #[error(transparent)]
     FuturesChannel(#[from] futures::channel::mpsc::SendError),
     #[error(transparent)]

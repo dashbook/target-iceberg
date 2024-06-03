@@ -16,7 +16,6 @@ object_store = { workspace = true }
 dashtool-common = { workspace = true }
 futures = { workspace = true }
 iceberg-rust = { workspace = true }
-iceberg-rust-spec = { workspace = true }
 jsonschema = "0.17"
 serde = { workspace = true }
 serde_json = { workspace = true }

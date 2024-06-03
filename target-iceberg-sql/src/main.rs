@@ -72,7 +72,7 @@ async fn main() -> Result<(), SingerIcebergError> {
 #[cfg(test)]
 mod tests {
     use crate::SqlTargetPlugin;
-    use anyhow::{anyhow, Error};
+    use anyhow::{anyhow, Error, Ok};
     use iceberg_rust::catalog::identifier::Identifier;
     use iceberg_rust::catalog::tabular::Tabular;
     use std::fs::File;
@@ -237,6 +237,99 @@ mod tests {
         let manifests = orders_table.manifests(None, None).await?;
 
         assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_mysql() -> Result<(), Error> {
+        let tempdir = tempdir()?;
+
+        let config_path = tempdir.path().join("config.json");
+
+        let mut config_file = File::create(config_path.clone())?;
+
+        config_file.write_all(
+            r#"
+            {
+            "streams": {
+                "inventory-orders": { "identifier": "public.inventory.orders" },
+                "inventory-customers": { "identifier": "public.inventory.customers" },
+                "inventory-products": { "identifier": "public.inventory.products" }
+            },
+            "catalogUrl": "sqlite://",
+            "catalogName": "public"
+            }
+        "#
+            .as_bytes(),
+        )?;
+
+        let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
+
+        select_streams("../testdata/mysql/catalog.json", plugin.clone()).await?;
+
+        let input = File::open("../testdata/mysql/data.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let catalog = plugin.catalog().await?;
+
+        let orders_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_tabular(&Identifier::parse("inventory.orders")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = orders_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 4);
+
+        let orders_version = orders_table
+            .metadata()
+            .properties
+            .get("singer.bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            orders_version,
+            r#"{"log_file":"mysql-bin.000003","log_pos":6089,"version":1715844176055}"#
+        );
+
+        let state = generate_state(plugin.clone()).await?;
+
+        assert_eq!(
+            state["bookmarks"]["inventory-orders"]["version"].to_string(),
+            "1715844176055"
+        );
+
+        let products_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_tabular(&Identifier::parse("inventory.products")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = products_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 9);
+
+        let products_version = products_table
+            .metadata()
+            .properties
+            .get("singer.bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            products_version,
+            r#"{"log_file":"mysql-bin.000003","log_pos":6089,"version":1715844176095}"#
+        );
 
         Ok(())
     }

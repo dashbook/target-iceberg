@@ -2,10 +2,9 @@ use std::{fs, sync::Arc};
 
 use anyhow::anyhow;
 use futures::{stream, StreamExt, TryStreamExt};
-use iceberg_rust::{
-    catalog::identifier::Identifier, spec::schema::Schema, table::table_builder::TableBuilder,
-};
-use iceberg_rust_spec::spec::partition::{PartitionField, PartitionSpec, Transform};
+use iceberg_rust::spec::partition::{PartitionField, PartitionSpec, Transform};
+use iceberg_rust::table::Table;
+use iceberg_rust::{catalog::identifier::Identifier, spec::schema::Schema};
 use serde_json::{Map, Value};
 use singer::catalog::{Catalog as SingerCatalog, Metadata, Stream as SingerStream};
 
@@ -83,14 +82,13 @@ pub async fn select_streams(
 
                 let catalog = plugin.catalog().await?;
 
-                if !catalog.table_exists(&ident).await? {
+                if !catalog.tabular_exists(&ident).await? {
                     let arrow_schema = schema_to_arrow(&stream.schema)?;
 
                     let schema = Schema::builder()
-                        .with_schema_id(1)
                         .with_fields((&arrow_schema).try_into()?)
                         .build()
-                        .map_err(iceberg_rust_spec::error::Error::from)?;
+                        .map_err(iceberg_rust::spec::error::Error::from)?;
 
                     let base_path = plugin
                         .bucket()
@@ -100,13 +98,12 @@ pub async fn select_streams(
                         + "/"
                         + &config.identifier.replace(".", "/");
 
-                    let mut builder = TableBuilder::new(ident, catalog)?;
+                    let mut builder = Table::builder();
+                    builder.with_name(ident.name());
 
                     if let Some(columns) = &config.partition_by {
-                        builder.with_partition_spec((
-                            1,
+                        builder.with_partition_spec(
                             PartitionSpec::builder()
-                                .with_spec_id(1)
                                 .with_fields(
                                     columns
                                         .iter()
@@ -130,16 +127,13 @@ pub async fn select_streams(
                                         .collect::<Result<_, _>>()?,
                                 )
                                 .build()
-                                .map_err(iceberg_rust_spec::error::Error::from)?,
-                        ));
+                                .map_err(iceberg_rust::spec::error::Error::from)?,
+                        );
                     }
 
-                    builder
-                        .location(&base_path)
-                        .with_schema((1, schema))
-                        .current_schema_id(1);
+                    builder.with_location(&base_path).with_schema(schema);
 
-                    builder.build().await?;
+                    builder.build(ident.namespace(), catalog).await?;
                 }
 
                 Ok::<_, SingerIcebergError>(stream)
