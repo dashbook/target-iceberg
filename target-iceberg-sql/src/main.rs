@@ -333,4 +333,126 @@ mod tests {
 
         Ok(())
     }
+
+    #[tokio::test]
+    async fn test_activate_version() -> Result<(), Error> {
+        let tempdir = tempdir()?;
+
+        let config_path = tempdir.path().join("config.json");
+
+        let mut config_file = File::create(config_path.clone())?;
+
+        config_file.write_all(
+            r#"
+            {
+            "streams": {
+                "inventory-orders": { "identifier": "public.inventory.orders" },
+                "inventory-customers": { "identifier": "public.inventory.customers" },
+                "inventory-products": { "identifier": "public.inventory.products" }
+            },
+            "catalogUrl": "sqlite://",
+            "catalogName": "public"
+            }
+        "#
+            .as_bytes(),
+        )?;
+
+        let plugin = Arc::new(SqlTargetPlugin::new(config_path.as_path().to_str().unwrap()).await?);
+
+        select_streams("../testdata/activate_version/catalog.json", plugin.clone()).await?;
+
+        let input = File::open("../testdata/activate_version/input1.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let catalog = plugin.catalog().await?;
+
+        let orders_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_tabular(&Identifier::parse("inventory.orders")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = orders_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 2);
+
+        let orders_version = orders_table
+            .metadata()
+            .properties
+            .get("singer.bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            orders_version,
+            r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002202,"xmin":null}"#
+        );
+
+        let state = generate_state(plugin.clone()).await?;
+
+        assert_eq!(
+            state["bookmarks"]["inventory-orders"]["version"].to_string(),
+            "1703756002202"
+        );
+
+        let products_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_tabular(&Identifier::parse("inventory.products")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = products_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 5);
+
+        let products_version = products_table
+            .metadata()
+            .properties
+            .get("singer.bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            products_version,
+            r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002235,"xmin":null}"#
+        );
+
+        let input = File::open("../testdata/activate_version/input2.txt")?;
+
+        ingest(plugin.clone(), &mut BufReader::new(input)).await?;
+
+        let orders_table = if let Tabular::Table(table) = catalog
+            .clone()
+            .load_tabular(&Identifier::parse("inventory.orders")?)
+            .await?
+        {
+            Ok(table)
+        } else {
+            Err(anyhow!("Not a table"))
+        }?;
+
+        let manifests = orders_table.manifests(None, None).await?;
+
+        assert_eq!(manifests[0].added_rows_count.unwrap(), 2);
+
+        let orders_version = orders_table
+            .metadata()
+            .properties
+            .get("singer.bookmark")
+            .expect("Failed to get bookmark");
+
+        assert_eq!(
+            orders_version,
+            r#"{"last_replication_method":"LOG_BASED","lsn":37125976,"version":1703756002203,"xmin":null}"#
+        );
+
+        Ok(())
+    }
 }

@@ -1,11 +1,16 @@
-use std::{collections::HashMap, io::BufRead, ops::Deref, sync::Arc};
+use std::{
+    collections::HashMap,
+    io::BufRead,
+    ops::Deref,
+    sync::{atomic::AtomicI64, Arc},
+};
 
 use anyhow::anyhow;
 use arrow::{datatypes::Schema as ArrowSchema, error::ArrowError, json::ReaderBuilder};
 use futures::{
     channel::mpsc::{unbounded, UnboundedReceiver, UnboundedSender},
     lock::Mutex,
-    stream, SinkExt, StreamExt, TryStreamExt,
+    SinkExt, StreamExt, TryStreamExt,
 };
 use iceberg_rust::{
     arrow::write::write_parquet_partitioned,
@@ -19,6 +24,7 @@ use tracing::{debug, debug_span, Instrument};
 use crate::{error::SingerIcebergError, plugin::TargetPlugin, state::SINGER_BOOKMARK};
 
 static ARROW_BATCH_SIZE: usize = 8192;
+static SINGER_VERSION: &str = "singer.version";
 
 pub async fn ingest(
     plugin: Arc<dyn TargetPlugin>,
@@ -26,7 +32,7 @@ pub async fn ingest(
 ) -> Result<(), SingerIcebergError> {
     let streams = plugin.streams();
     // Create sender and reviever for every stream
-    let (senders, recievers): (
+    let (mut message_senders, message_recievers): (
         HashMap<String, UnboundedSender<Message>>,
         Vec<UnboundedReceiver<Message>>,
     ) = streams
@@ -37,12 +43,18 @@ pub async fn ingest(
         })
         .unzip();
 
+    let (mut senders, recievers) = unbounded();
+
+    for reciever in message_recievers {
+        senders.send(reciever).await?;
+    }
+
     let (mut state_sender, state_reciever) = unbounded();
 
     let state = Arc::new(Mutex::new(JsonValue::Null));
 
     // Process messages for every stream
-    let handle = stream::iter(recievers.into_iter())
+    let handle = recievers
         .map(Ok::<_, SingerIcebergError>)
         .try_for_each_concurrent(None, |mut messages| {
             let plugin = plugin.clone();
@@ -53,6 +65,8 @@ pub async fn ingest(
                     Message::Schema(schema) => Ok(schema),
                     _ => Err(SingerIcebergError::NoSchema),
                 }?;
+
+                let active_version = Arc::new(AtomicI64::new(0));
 
                 let stream = schema.stream;
 
@@ -93,6 +107,8 @@ pub async fn ingest(
                     return Err(SingerIcebergError::Unknown);
                 };
 
+                let previous_version = table.metadata().properties.get(SINGER_VERSION);
+
                 let table_schema = table
                     .metadata()
                     .current_schema(plugin.branch().as_deref())?;
@@ -101,10 +117,20 @@ pub async fn ingest(
                     Arc::new((table_schema.fields()).try_into()?);
 
                 let batches = messages
-                    .filter_map(|message| async move {
-                        match message {
-                            Message::Record(record) => Some(record),
-                            _ => None,
+                    .filter_map(|message| {
+                        let active_version = active_version.clone();
+                        async move {
+                            match message {
+                                Message::Record(record) => Some(record),
+                                Message::ActivateVersion(version) => {
+                                    active_version.store(
+                                        version.version,
+                                        std::sync::atomic::Ordering::Relaxed,
+                                    );
+                                    None
+                                }
+                                _ => None,
+                            }
                         }
                     })
                     // Check if record conforms to schema
@@ -164,9 +190,17 @@ pub async fn ingest(
                         })
                     };
 
-                    let transaction = table
-                        .new_transaction(plugin.branch().as_deref())
-                        .append(files);
+                    let active_version = active_version.load(std::sync::atomic::Ordering::Relaxed);
+
+                    let transaction = if previous_version != Some(&active_version.to_string()) {
+                        table
+                            .new_transaction(plugin.branch().as_deref())
+                            .rewrite(files)
+                    } else {
+                        table
+                            .new_transaction(plugin.branch().as_deref())
+                            .append(files)
+                    };
 
                     if let Some(state) = &stream_state {
                         debug!("State of stream {}: {}", &stream, &state);
@@ -178,6 +212,15 @@ pub async fn ingest(
                         None => transaction,
                     };
 
+                    let transaction = if active_version != 0 {
+                        transaction.update_properties(vec![(
+                            SINGER_VERSION.to_string(),
+                            active_version.to_string(),
+                        )])
+                    } else {
+                        transaction
+                    };
+
                     transaction.commit().await?;
                 }
 
@@ -185,6 +228,8 @@ pub async fn ingest(
             }
             .instrument(debug_span!("sync_stream"))
         });
+
+    let mut versions: HashMap<String, i64> = HashMap::new();
 
     // Send messages to channel based on stream
     for line in input.lines() {
@@ -194,8 +239,8 @@ pub async fn ingest(
             let message: Message = serde_json::from_str(&line)?;
             match &message {
                 Message::Schema(schema) => {
-                    senders
-                        .get(&schema.stream)
+                    message_senders
+                        .get_mut(&schema.stream)
                         .ok_or(SingerIcebergError::Anyhow(anyhow!(
                             "Stream {} not found.",
                             &schema.stream,
@@ -204,8 +249,33 @@ pub async fn ingest(
                         .await?
                 }
                 Message::Record(record) => {
-                    senders
-                        .get(&record.stream)
+                    message_senders
+                        .get_mut(&record.stream)
+                        .ok_or(SingerIcebergError::Anyhow(anyhow!(
+                            "Stream {} not found.",
+                            &record.stream,
+                        )))?
+                        .send(message)
+                        .await?
+                }
+                Message::ActivateVersion(record) => {
+                    if let Some(version) = versions.get(&record.stream) {
+                        if *version != record.version {
+                            let (s, r) = unbounded();
+                            message_senders
+                                .insert(record.stream.clone(), s)
+                                .ok_or(SingerIcebergError::Anyhow(anyhow!(
+                                    "Stream must be available."
+                                )))?
+                                .close_channel();
+                            senders.send(r).await?;
+                            versions.insert(record.stream.clone(), record.version);
+                        }
+                    } else {
+                        versions.insert(record.stream.clone(), record.version);
+                    }
+                    message_senders
+                        .get_mut(&record.stream)
                         .ok_or(SingerIcebergError::Anyhow(anyhow!(
                             "Stream {} not found.",
                             &record.stream,
@@ -214,12 +284,12 @@ pub async fn ingest(
                         .await?
                 }
                 Message::State(_) => state_sender.send(message).await?,
-                Message::ActivateVersion(_) => (),
             }
         }
     }
 
     state_sender.close_channel();
+    senders.close_channel();
 
     state_reciever
         .map(Ok::<_, SingerIcebergError>)
@@ -235,7 +305,9 @@ pub async fn ingest(
         })
         .await?;
 
-    senders.values().for_each(|sender| sender.close_channel());
+    message_senders
+        .into_iter()
+        .for_each(|(_, sender)| sender.close_channel());
 
     handle.await?;
 

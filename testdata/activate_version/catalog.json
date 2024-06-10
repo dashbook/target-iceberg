@@ -1,0 +1,1318 @@
+{
+  "streams": [
+    {
+      "table_name": "customers",
+      "stream": "customers",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true,
+            "table-key-properties": [
+              "id"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "first_name"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "last_name"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "email"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-customers",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "first_name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 255
+          },
+          "last_name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 255
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 255
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "geography_columns",
+      "stream": "geography_columns",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "table-key-properties": [],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_catalog"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_schema"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_name"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_geography_column"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "coord_dimension"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "srid"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "type"
+          ],
+          "metadata": {
+            "sql-datatype": "text",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-geography_columns",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "f_table_catalog": {},
+          "f_table_schema": {},
+          "f_table_name": {},
+          "f_geography_column": {},
+          "coord_dimension": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "srid": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "geometry_columns",
+      "stream": "geometry_columns",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "table-key-properties": [],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_catalog"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_schema"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_table_name"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "f_geometry_column"
+          ],
+          "metadata": {
+            "sql-datatype": "name",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "coord_dimension"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "srid"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "type"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-geometry_columns",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "f_table_catalog": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 256
+          },
+          "f_table_schema": {},
+          "f_table_name": {},
+          "f_geometry_column": {},
+          "coord_dimension": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "srid": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 30
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "spatial_ref_sys",
+      "stream": "spatial_ref_sys",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "table-key-properties": [
+              "srid"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": 8500,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "srid"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "auth_name"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "auth_srid"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "srtext"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "proj4text"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-spatial_ref_sys",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "srid": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "auth_name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 256
+          },
+          "auth_srid": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "srtext": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 2048
+          },
+          "proj4text": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 2048
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "orders",
+      "stream": "orders",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true,
+            "table-key-properties": [
+              "id"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "order_date"
+          ],
+          "metadata": {
+            "sql-datatype": "date",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "purchaser"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "quantity"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "product_id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-orders",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "order_date": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "purchaser": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "quantity": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "product_id": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "products",
+      "stream": "products",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "selected": true,
+            "table-key-properties": [
+              "id"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "name"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "description"
+          ],
+          "metadata": {
+            "sql-datatype": "character varying",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "weight"
+          ],
+          "metadata": {
+            "sql-datatype": "double precision",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-products",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 255
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "maxLength": 512
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ]
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "products_on_hand",
+      "stream": "products_on_hand",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "table-key-properties": [
+              "product_id"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "product_id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "quantity"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "available",
+            "selected-by-default": true
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-products_on_hand",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "quantity": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          }
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    },
+    {
+      "table_name": "geom",
+      "stream": "geom",
+      "metadata": [
+        {
+          "breadcrumb": [],
+          "metadata": {
+            "table-key-properties": [
+              "id"
+            ],
+            "schema-name": "inventory",
+            "database-name": "postgres",
+            "row-count": -1,
+            "is-view": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "id"
+          ],
+          "metadata": {
+            "sql-datatype": "integer",
+            "inclusion": "automatic",
+            "selected-by-default": true
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "g"
+          ],
+          "metadata": {
+            "sql-datatype": "inventory.geometry",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        },
+        {
+          "breadcrumb": [
+            "properties",
+            "h"
+          ],
+          "metadata": {
+            "sql-datatype": "inventory.geometry",
+            "inclusion": "unsupported",
+            "selected-by-default": false
+          }
+        }
+      ],
+      "tap_stream_id": "inventory-geom",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "integer"
+            ],
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "g": {},
+          "h": {}
+        },
+        "definitions": {
+          "sdc_recursive_integer_array": {
+            "type": [
+              "null",
+              "integer",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_integer_array"
+            }
+          },
+          "sdc_recursive_number_array": {
+            "type": [
+              "null",
+              "number",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_number_array"
+            }
+          },
+          "sdc_recursive_string_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_string_array"
+            }
+          },
+          "sdc_recursive_boolean_array": {
+            "type": [
+              "null",
+              "boolean",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_boolean_array"
+            }
+          },
+          "sdc_recursive_timestamp_array": {
+            "type": [
+              "null",
+              "string",
+              "array"
+            ],
+            "format": "date-time",
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_timestamp_array"
+            }
+          },
+          "sdc_recursive_object_array": {
+            "type": [
+              "null",
+              "object",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/definitions/sdc_recursive_object_array"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
