@@ -49,8 +49,6 @@ pub async fn ingest(
         senders.send(reciever).await?;
     }
 
-    let (mut state_sender, state_reciever) = unbounded();
-
     let state = Arc::new(Mutex::new(JsonValue::Null));
 
     // Process messages for every stream
@@ -283,27 +281,15 @@ pub async fn ingest(
                         .send(message)
                         .await?
                 }
-                Message::State(_) => state_sender.send(message).await?,
+                Message::State(new_state) => {
+                    let mut state = state.lock().await;
+                    *state = new_state.value.clone()
+                }
             }
         }
     }
 
-    state_sender.close_channel();
     senders.close_channel();
-
-    state_reciever
-        .map(Ok::<_, SingerIcebergError>)
-        .try_for_each_concurrent(None, |value| {
-            let state = state.clone();
-            async move {
-                if let Message::State(value) = value {
-                    let mut state = state.lock().await;
-                    *state = value.value
-                }
-                Ok(())
-            }
-        })
-        .await?;
 
     message_senders
         .into_iter()

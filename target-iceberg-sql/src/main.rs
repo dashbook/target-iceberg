@@ -296,14 +296,14 @@ mod tests {
 
         assert_eq!(
             orders_version,
-            r#"{"log_file":"mysql-bin.000003","log_pos":6089,"version":1715844176055}"#
+            r#"{"log_file":"mysql-bin.000003","log_pos":7361,"version":1718390659017}"#
         );
 
         let state = generate_state(plugin.clone()).await?;
 
         assert_eq!(
             state["bookmarks"]["inventory-orders"]["version"].to_string(),
-            "1715844176055"
+            "1718390659017"
         );
 
         let products_table = if let Tabular::Table(table) = catalog
@@ -328,7 +328,7 @@ mod tests {
 
         assert_eq!(
             products_version,
-            r#"{"log_file":"mysql-bin.000003","log_pos":6089,"version":1715844176095}"#
+            r#"{"log_file":"mysql-bin.000003","log_pos":7361,"version":1718390659058}"#
         );
 
         Ok(())
